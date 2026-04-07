@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Disease Classification - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light theme */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --border-color: #e0e0e0;
+            --accent-1: #667eea;
+            --accent-2: #764ba2;
+            --success-bg: #d4edda;
+            --success-text: #155724;
+            --warning-bg: #fff3cd;
+            --warning-text: #856404;
+            --error-bg: #fee;
+            --error-text: #c33;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --button-clear-bg: #e0e0e0;
+            --button-clear-text: #333;
+        }
+
+        /* Dark Mode - Default */
+        body.dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --border-color: #333333;
+            --accent-1: #667eea;
+            --accent-2: #764ba2;
+            --success-bg: #1e4620;
+            --success-text: #90ee90;
+            --warning-bg: #4a3a1a;
+            --warning-text: #ffd700;
+            --error-bg: #4a1a1a;
+            --error-text: #ff6b6b;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --button-clear-bg: #2a2a3e;
+            --button-clear-text: #e0e0e0;
+        }
+
+        /* Ocean Theme */
+        body.dark-mode-ocean {
+            --bg-primary: #0f2540;
+            --bg-secondary: #1b4965;
+            --text-primary: #e0f7ff;
+            --text-secondary: #b0d4e3;
+            --text-tertiary: #7a9ab8;
+            --accent-1: #00a8cc;
+            --accent-2: #0091ad;
+            --success-bg: #1a5a3a;
+            --success-text: #7fff7f;
+            --warning-bg: #5a4a1a;
+            --warning-text: #ffeb3b;
+            --error-bg: #5a1a1a;
+            --error-text: #ff6b9d;
+            --gradient: linear-gradient(135deg, #00a8cc 0%, #0091ad 100%);
+            --button-clear-bg: #1b4965;
+            --button-clear-text: #e0f7ff;
+        }
+
+        /* Forest Theme */
+        body.dark-mode-forest {
+            --bg-primary: #1a3a2a;
+            --bg-secondary: #2d5a3d;
+            --text-primary: #c8f7dc;
+            --text-secondary: #a0d8b8;
+            --text-tertiary: #7ab89c;
+            --accent-1: #52b788;
+            --accent-2: #40916c;
+            --success-bg: #1e4620;
+            --success-text: #90ee90;
+            --warning-bg: #5a4a1a;
+            --warning-text: #ffeb3b;
+            --error-bg: #5a1a1a;
+            --error-text: #ff8a7d;
+            --gradient: linear-gradient(135deg, #52b788 0%, #40916c 100%);
+            --button-clear-bg: #2d5a3d;
+            --button-clear-text: #c8f7dc;
+        }
+
+        /* Sunset Theme */
+        body.dark-mode-sunset {
+            --bg-primary: #3a2a25;
+            --bg-secondary: #5c3d3a;
+            --text-primary: #f5e6d3;
+            --text-secondary: #d4a373;
+            --text-tertiary: #b8956a;
+            --accent-1: #e8a76a;
+            --accent-2: #d4885e;
+            --success-bg: #4a3a2a;
+            --success-text: #ffb366;
+            --warning-bg: #5a4a2a;
+            --warning-text: #ffeb3b;
+            --error-bg: #5a2a1a;
+            --error-text: #ff8a66;
+            --gradient: linear-gradient(135deg, #e8a76a 0%, #d4885e 100%);
+            --button-clear-bg: #5c3d3a;
+            --button-clear-text: #f5e6d3;
+        }
+
+        /* Midnight Theme */
+        body.dark-mode-midnight {
+            --bg-primary: #0a0a15;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a8a8c0;
+            --text-tertiary: #787890;
+            --accent-1: #4a6fa5;
+            --accent-2: #0f3460;
+            --success-bg: #1a4a2e;
+            --success-text: #7aff7a;
+            --warning-bg: #4a4a1a;
+            --warning-text: #ffff7a;
+            --error-bg: #5a1a1a;
+            --error-text: #ff6b6b;
+            --gradient: linear-gradient(135deg, #4a6fa5 0%, #0f3460 100%);
+            --button-clear-bg: #1a1a2e;
+            --button-clear-text: #e8e8f0;
+        }
+
+        /* Cyberpunk Theme */
+        body.dark-mode-cyberpunk {
+            --bg-primary: #0d001a;
+            --bg-secondary: #2a0845;
+            --text-primary: #ff006e;
+            --text-secondary: #fb5607;
+            --text-tertiary: #ffbe0b;
+            --accent-1: #ff006e;
+            --accent-2: #8338ec;
+            --success-bg: #1a4a2a;
+            --success-text: #00ff88;
+            --warning-bg: #5a4a1a;
+            --warning-text: #ffff00;
+            --error-bg: #5a1a1a;
+            --error-text: #ff0066;
+            --gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 100%);
+            --button-clear-bg: #2a0845;
+            --button-clear-text: #ff006e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark-mode-ocean {
+            background: linear-gradient(135deg, #0f2540 0%, #1b4965 100%);
+        }
+
+        body.dark-mode-forest {
+            background: linear-gradient(135deg, #1a3a2a 0%, #2d5a3d 100%);
+        }
+
+        body.dark-mode-sunset {
+            background: linear-gradient(135deg, #3a2a25 0%, #5c3d3a 100%);
+        }
+
+        body.dark-mode-midnight {
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+        }
+
+        body.dark-mode-cyberpunk {
+            background: linear-gradient(135deg, #0d001a 0%, #2a0845 100%);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .container {
+            background: var(--bg-primary);
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        /* Theme Selector */
+        .theme-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .theme-selector.show {
+            display: grid;
+        }
+
+        .theme-option {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-align: center;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+
+        .theme-option:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-option.active {
+            border: 2px solid var(--text-primary);
+            font-weight: 700;
+        }
+
+        #themeToggle {
+            font-size: 24px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        #themeToggle:hover {
+            transform: scale(1.2);
+        }
+
+        .warning {
+            background: var(--warning-bg);
+            border-left: 4px solid var(--accent-1);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            color: var(--warning-text);
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--accent-1);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            background: var(--bg-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: var(--bg-primary);
+            border-color: var(--accent-2);
+            transform: translateY(-2px);
+        }
+
+        .upload-area.drag-over {
+            background: var(--accent-1);
+            opacity: 0.15;
+            border-color: var(--accent-1);
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .upload-hint {
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+
+        #preview {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            display: none;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-predict, .btn-export {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-predict:hover:not(:disabled), .btn-export:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-predict:disabled, .btn-export:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-clear {
+            background: var(--button-clear-bg);
+            color: var(--button-clear-text);
+        }
+
+        .btn-clear:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+
+        .result {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--accent-1);
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .result-value {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .progress-bar {
+            background: var(--border-color);
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: var(--gradient);
+            height: 100%;
+            width: 0%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .error {
+            background: var(--error-bg);
+            color: var(--error-text);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid var(--error-text);
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            color: var(--accent-1);
+            margin: 20px 0;
+        }
+
+        .loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--accent-1);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .result-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .symptoms-list, .recommendations-list {
+            margin-left: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .symptoms-list li, .recommendations-list li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .severity {
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .severity-low {
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .severity-medium {
+            background: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        .severity-high {
+            background: var(--error-bg);
+            color: var(--error-text);
+        }
+
+        .urgency-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-1);
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        .urgency-urgent {
+            border-left-color: var(--error-text);
+            background: var(--error-bg);
+            color: var(--error-text);
+        }
+
+        .urgency-high {
+            border-left-color: var(--warning-text);
+            background: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-export {
+            flex: 1;
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+
+        .export-success {
+            background: var(--success-bg);
+            color: var(--success-text);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-section {
+            display: block;
+            opacity: 1;
+            max-height: 500px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-section.hidden {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+        }
+
+        .upload-section {
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section.active {
+            display: block;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .btn-back {
+            background: var(--button-clear-bg);
+            color: var(--button-clear-text);
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-1);
+            color: white;
+            transform: translateX(-3px);
+        }
+
+        a {
+            color: var(--accent-1);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            opacity: 0.8;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            background: var(--accent-1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER SECTION -->
+        <div class="header-top">
+            <h1>🏥 Skin Disease Classifier</h1>
+            <div style="position: relative;">
+                <button id="themeToggle" style="background: transparent; border: none; cursor: pointer; font-size: 24px;">🌙</button>
+                <div class="theme-selector" id="themeSelector">
+                    <div class="theme-option" data-theme="light">☀️ Light</div>
+                    <div class="theme-option active" data-theme="default">🌙 Default</div>
+                    <div class="theme-option" data-theme="ocean">🌊 Ocean</div>
+                    <div class="theme-option" data-theme="forest">🌲 Forest</div>
+                    <div class="theme-option" data-theme="sunset">🌅 Sunset</div>
+                    <div class="theme-option" data-theme="midnight">🌃 Midnight</div>
+                    <div class="theme-option" data-theme="cyberpunk">⚡ Cyberpunk</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVIGATION SECTION -->
+        <div id="navSection" class="nav-section">
+            <p class="subtitle">AI-powered skin condition analysis (Educational Demo)</p>
+
+            <div style="text-align: center; margin-bottom: 20px;" class="nav-links">
+                <a href="/gallery">📷 View Gallery</a>
+                <a href="/batch-analysis">📊 Batch Analysis</a>
+                <a href="/disease-info">🎓 Disease Info</a>
+                <a href="/statistics">📈 Statistics</a>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ Disclaimer:</strong> This is an educational tool for demonstration purposes only. 
+                It is NOT a medical device and should NOT be used for actual medical diagnosis. 
+                Always consult a qualified dermatologist for real medical concerns.
+            </div>
+        </div>
+
+        <!-- UPLOAD SECTION -->
+        <div id="uploadSection" class="upload-section active">
+            <form id="uploadForm">
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="fileInput" accept="image/*" required>
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-text">Click to upload or drag and drop</div>
+                    <div class="upload-hint">PNG, JPG, GIF up to 16MB</div>
+                </div>
+
+                <img id="preview" alt="Preview">
+
+                <div class="loader" id="loader">
+                    <div class="spinner"></div>
+                    <p>Analyzing image...</p>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-predict" id="predictBtn" disabled>Analyze</button>
+                    <button type="button" class="btn-clear" id="clearBtn">Clear</button>
+                </div>
+            </form>
+
+            <div class="error" id="error"></div>
+        </div>
+
+        <!-- RESULT SECTION -->
+        <div class="result" id="result">
+            <button type="button" class="btn-back" id="backBtn">← Back</button>
+
+            <div class="result-item">
+                <div class="result-label">Predicted Condition:</div>
+                <div class="result-value" id="resultDisease">—</div>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">Confidence Level:</div>
+                <div class="result-value" id="resultConfidence">0%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">Severity:</div>
+                <div class="result-value severity" id="resultSeverity">—</div>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">Description:</div>
+                <div class="result-description" id="resultDescription">—</div>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">Symptoms:</div>
+                <ul class="symptoms-list" id="symptomsList"></ul>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">Recommendations:</div>
+                <ul class="recommendations-list" id="recommendationsList"></ul>
+            </div>
+
+            <div class="urgency-box" id="urgencyBox">
+                <div id="urgencyText"></div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" class="btn-export" id="exportPdfBtn">📥 Export Report (PDF)</button>
+                <a href="/comparison" style="flex: 1; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                    🔄 Compare Images
+                </a>
+            </div>
+
+            <div class="export-success" id="exportSuccess">✅ Report downloaded successfully!</div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize theme from localStorage
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        const currentVariant = localStorage.getItem('themeVariant') || 'default';
+
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (currentVariant !== 'default') {
+                document.body.classList.add(`dark-mode-${currentVariant}`);
+            }
+        }
+
+        // =====================
+        // THEME MANAGEMENT
+        // =====================
+        const themeToggle = document.getElementById('themeToggle');
+        const themeSelector = document.getElementById('themeSelector');
+        const themeOptions = document.querySelectorAll('.theme-option');
+
+        themeToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeSelector.classList.toggle('show');
+        });
+
+        themeOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const theme = option.dataset.theme;
+
+                // Reset all classes
+                document.body.classList.remove('dark-mode', 'dark-mode-ocean', 'dark-mode-forest', 'dark-mode-sunset', 'dark-mode-midnight', 'dark-mode-cyberpunk');
+
+                // Update active state
+                themeOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+
+                if (theme === 'light') {
+                    localStorage.setItem('theme', 'light');
+                    localStorage.removeItem('themeVariant');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    document.body.classList.add('dark-mode');
+                    if (theme !== 'default') {
+                        document.body.classList.add(`dark-mode-${theme}`);
+                        localStorage.setItem('themeVariant', theme);
+                    } else {
+                        localStorage.removeItem('themeVariant');
+                    }
+                    localStorage.setItem('theme', 'dark');
+                    themeToggle.textContent = '🌙';
+                }
+
+                themeSelector.classList.remove('show');
+            });
+        });
+
+        document.addEventListener('click', () => {
+            themeSelector.classList.remove('show');
+        });
+
+        // Set initial active theme
+        const activeTheme = currentTheme === 'dark' ? currentVariant : 'light';
+        themeOptions.forEach(option => {
+            if (option.dataset.theme === activeTheme) {
+                option.classList.add('active');
+            }
+        });
+
+        // =====================
+        // SECTION MANAGEMENT
+        // =====================
+        const navSection = document.getElementById('navSection');
+        const uploadSection = document.getElementById('uploadSection');
+        const result = document.getElementById('result');
+        const backBtn = document.getElementById('backBtn');
+
+        function showUploadInterface() {
+            navSection.classList.add('hidden');
+            uploadSection.classList.add('active');
+            result.classList.remove('active');
+        }
+
+        function showResults() {
+            navSection.classList.add('hidden');
+            uploadSection.classList.remove('active');
+            result.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function showHome() {
+            navSection.classList.remove('hidden');
+            uploadSection.classList.remove('active');
+            result.classList.remove('active');
+            window.scrollTo(0, 0);
+        }
+
+        backBtn.addEventListener('click', () => {
+            clearForm();
+            showHome();
+        });
+
+        // =====================
+        // FILE UPLOAD HANDLING
+        // =====================
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const predictBtn = document.getElementById('predictBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const error = document.getElementById('error');
+        const loader = document.getElementById('loader');
+        const uploadForm = document.getElementById('uploadForm');
+        const exportPdfBtn = document.getElementById('exportPdfBtn');
+        const exportSuccess = document.getElementById('exportSuccess');
+
+        let lastResultData = null;
+
+        const MAX_FILE_SIZE = 16 * 1024 * 1024;
+        const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+
+        function validateFile(file) {
+            if (!file) {
+                return { valid: false, error: 'No file selected' };
+            }
+            if (!ALLOWED_TYPES.includes(file.type)) {
+                return { valid: false, error: `File type not allowed. Allowed types: PNG, JPG, GIF, BMP.` };
+            }
+            if (file.size > MAX_FILE_SIZE) {
+                return { valid: false, error: `File size exceeds 16MB limit.` };
+            }
+            return { valid: true };
+        }
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const validation = validateFile(file);
+                if (!validation.valid) {
+                    showError(validation.error);
+                    fileInput.value = '';
+                    return;
+                }
+                displayImage(file);
+                showUploadInterface();
+            }
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                const validation = validateFile(file);
+                if (!validation.valid) {
+                    showError(validation.error);
+                    return;
+                }
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+                displayImage(file);
+                showUploadInterface();
+            }
+        });
+
+        function displayImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                predictBtn.disabled = false;
+                error.style.display = 'none';
+                exportSuccess.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // =====================
+        // ANALYSIS & RESULTS
+        // =====================
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!fileInput.files[0]) {
+                showError('Please select an image first');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            predictBtn.disabled = true;
+            loader.style.display = 'block';
+            error.style.display = 'none';
+            exportSuccess.style.display = 'none';
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError(data.error || 'An error occurred');
+                } else {
+                    lastResultData = data;
+                    displayResult(data);
+                    showResults();
+                }
+            } catch (err) {
+                showError('Failed to analyze image: ' + err.message);
+            } finally {
+                predictBtn.disabled = false;
+                loader.style.display = 'none';
+            }
+        });
+
+        function displayResult(data) {
+            document.getElementById('resultDisease').textContent = data.disease || 'Unknown';
+            const confidence = parseFloat(data.confidence) || 0;
+            document.getElementById('resultConfidence').textContent = confidence + '%';
+            document.getElementById('progressFill').textContent = confidence + '%';
+            document.getElementById('progressFill').style.width = confidence + '%';
+
+            const resultSeverity = document.getElementById('resultSeverity');
+            resultSeverity.textContent = data.severity || 'Unknown';
+            resultSeverity.className = 'severity severity-' + (data.severity ? data.severity.toLowerCase().includes('high') ? 'high' : data.severity.toLowerCase().includes('medium') ? 'medium' : 'low' : 'medium');
+
+            document.getElementById('resultDescription').textContent = data.description || 'N/A';
+
+            const symptomsList = document.getElementById('symptomsList');
+            symptomsList.innerHTML = '';
+            if (data.symptoms && data.symptoms.length > 0) {
+                data.symptoms.forEach(symptom => {
+                    const li = document.createElement('li');
+                    li.textContent = symptom;
+                    symptomsList.appendChild(li);
+                });
+            }
+
+            const recommendationsList = document.getElementById('recommendationsList');
+            recommendationsList.innerHTML = '';
+            if (data.recommendations && data.recommendations.length > 0) {
+                data.recommendations.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    recommendationsList.appendChild(li);
+                });
+            }
+
+            const urgencyBox = document.getElementById('urgencyBox');
+            const urgencyText = document.getElementById('urgencyText');
+            urgencyText.textContent = data.urgency || 'No immediate action needed';
+            urgencyBox.className = 'urgency-box';
+            if (data.urgency && data.urgency.includes('URGENT')) {
+                urgencyBox.classList.add('urgency-urgent');
+            } else if (data.urgency && data.urgency.includes('High')) {
+                urgencyBox.classList.add('urgency-high');
+            }
+        }
+
+        function showError(message) {
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+
+        function clearForm() {
+            fileInput.value = '';
+            preview.style.display = 'none';
+            error.style.display = 'none';
+            exportSuccess.style.display = 'none';
+            predictBtn.disabled = true;
+            lastResultData = null;
+        }
+
+        // =====================
+        // PDF EXPORT
+        // =====================
+        exportPdfBtn.addEventListener('click', async () => {
+            if (!lastResultData) {
+                showError('Please analyze an image first');
+                return;
+            }
+
+            exportPdfBtn.disabled = true;
+            exportPdfBtn.textContent = '⏳ Generating...';
+
+            try {
+                const response = await fetch('/export-pdf', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(lastResultData)
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    showError(data.error || 'Failed to generate PDF');
+                } else {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `skin_analysis_${new Date().toISOString().slice(0,10)}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+
+                    exportSuccess.style.display = 'block';
+                    setTimeout(() => {
+                        exportSuccess.style.display = 'none';
+                    }, 3000);
+                }
+            } catch (err) {
+                showError('PDF export failed: ' + err.message);
+            } finally {
+                exportPdfBtn.disabled = false;
+                exportPdfBtn.textContent = '📥 Export Report (PDF)';
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            clearForm();
+            showHome();
+        });
+    </script>
+</body>
+</html>

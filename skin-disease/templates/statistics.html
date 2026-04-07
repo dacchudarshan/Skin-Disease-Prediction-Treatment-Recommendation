@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Statistics - Skin Disease Classification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --border-color: #e0e0e0;
+            --accent-1: #667eea;
+            --accent-2: #764ba2;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --border-color: #333333;
+        }
+
+        body.dark-mode-ocean {
+            --bg-primary: #0f2540;
+            --bg-secondary: #1b4965;
+            --text-primary: #e0f7ff;
+            --text-secondary: #b0d4e3;
+            --accent-1: #00a8cc;
+            --accent-2: #0091ad;
+        }
+
+        body.dark-mode-forest {
+            --bg-primary: #1a3a2a;
+            --bg-secondary: #2d5a3d;
+            --text-primary: #c8f7dc;
+            --text-secondary: #a0d8b8;
+            --accent-1: #52b788;
+            --accent-2: #40916c;
+        }
+
+        body.dark-mode-sunset {
+            --bg-primary: #3a2a25;
+            --bg-secondary: #5c3d3a;
+            --text-primary: #f5e6d3;
+            --text-secondary: #d4a373;
+            --accent-1: #e8a76a;
+            --accent-2: #d4885e;
+        }
+
+        body.dark-mode-midnight {
+            --bg-primary: #0a0a15;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a8a8c0;
+            --accent-1: #4a6fa5;
+            --accent-2: #0f3460;
+        }
+
+        body.dark-mode-cyberpunk {
+            --bg-primary: #0d001a;
+            --bg-secondary: #2a0845;
+            --text-primary: #ff006e;
+            --accent-1: #ff006e;
+            --accent-2: #8338ec;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark-mode-ocean {
+            background: linear-gradient(135deg, #0f2540 0%, #1b4965 100%);
+        }
+
+        body.dark-mode-forest {
+            background: linear-gradient(135deg, #1a3a2a 0%, #2d5a3d 100%);
+        }
+
+        body.dark-mode-sunset {
+            background: linear-gradient(135deg, #3a2a25 0%, #5c3d3a 100%);
+        }
+
+        body.dark-mode-midnight {
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+        }
+
+        body.dark-mode-cyberpunk {
+            background: linear-gradient(135deg, #0d001a 0%, #2a0845 100%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+            flex-wrap: wrap;
+            animation: slideDown 0.5s ease;
+        }
+
+        h1 {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            background: var(--accent-1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-2);
+            transform: translateX(-3px);
+        }
+
+        #themeToggle {
+            font-size: 24px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        #themeToggle:hover {
+            transform: scale(1.2);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Advanced Tools Section */
+        .tools-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease;
+        }
+
+        .tools-title {
+            color: var(--accent-1);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .tool-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tool-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        input[type="text"], select {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-1);
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent-1);
+            color: var(--accent-1);
+        }
+
+        .filter-btn.active {
+            background: var(--accent-1);
+            color: white;
+            border-color: var(--accent-1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        /* AI Models Section */
+        .ai-models-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--accent-1);
+            animation: slideDown 0.7s ease;
+        }
+
+        .models-title {
+            color: var(--accent-1);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .model-card {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .model-card:hover {
+            border-color: var(--accent-1);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .model-card.active {
+            border-color: var(--accent-1);
+            background: var(--bg-secondary);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .model-emoji {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .model-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .model-description {
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .model-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-beta {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            animation: slideDown 0.8s ease;
+        }
+
+        .stat-card {
+            background: var(--gradient);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+            animation: slideUp 0.5s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.3);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* Chart Section */
+        .chart-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            animation: slideDown 0.9s ease;
+        }
+
+        .chart-title {
+            color: var(--accent-1);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-bar {
+            margin-bottom: 20px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .bar-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .bar-container {
+            background: var(--border-color);
+            border-radius: 6px;
+            height: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            background: var(--gradient);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .bar-container:hover .bar-fill::after {
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Theme Selector */
+        .theme-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .theme-selector.show {
+            display: grid;
+        }
+
+        .theme-option {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-align: center;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .theme-option:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-1);
+        }
+
+        .theme-option.active {
+            border: 2px solid var(--text-primary);
+            font-weight: 700;
+            background: var(--accent-1);
+            color: white;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📈 Advanced Statistics</h1>
+                <p class="subtitle">AI-powered analysis & usage insights</p>
+            </div>
+            <a href="/" class="btn-back">← Back to Home</a>
+            <div style="position: relative;">
+                <button id="themeToggle" style="background: transparent; border: none; cursor: pointer; font-size: 24px;">🌙</button>
+                <div class="theme-selector" id="themeSelector">
+                    <div class="theme-option" data-theme="light">☀️ Light</div>
+                    <div class="theme-option active" data-theme="default">🌙 Default</div>
+                    <div class="theme-option" data-theme="ocean">🌊 Ocean</div>
+                    <div class="theme-option" data-theme="forest">🌲 Forest</div>
+                    <div class="theme-option" data-theme="sunset">🌅 Sunset</div>
+                    <div class="theme-option" data-theme="midnight">🌃 Midnight</div>
+                    <div class="theme-option" data-theme="cyberpunk">⚡ Cyberpunk</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Tools Section -->
+        <div class="tools-section">
+            <div class="tools-title">🔧 Advanced Analytics Tools</div>
+            <div class="tools-grid">
+                <div class="tool-group">
+                    <div class="tool-label">🔍 Search Disease</div>
+                    <input type="text" id="searchInput" placeholder="Search statistics...">
+                </div>
+                <div class="tool-group">
+                    <div class="tool-label">📊 Time Range</div>
+                    <select id="timeRange">
+                        <option value="all">All Time</option>
+                        <option value="month">Last 30 Days</option>
+                        <option value="week">Last 7 Days</option>
+                        <option value="today">Today</option>
+                    </select>
+                </div>
+            </div>
+            <div class="tool-label" style="margin-bottom: 10px;">🏷️ Confidence Filter</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Results</button>
+                <button class="filter-btn" data-filter="high">High (90%+)</button>
+                <button class="filter-btn" data-filter="medium">Medium (70-89%)</button>
+                <button class="filter-btn" data-filter="low">Low (<70%)</button>
+            </div>
+        </div>
+
+        <!-- AI Models Section -->
+        <div class="ai-models-section">
+            <div class="models-title">🤖 AI Analysis Models</div>
+            <div class="models-grid">
+                <div class="model-card active" data-model="color-analysis">
+                    <div class="model-emoji">🎨</div>
+                    <div class="model-name">Color Analysis</div>
+                    <div class="model-description">Analyzes pigmentation & color patterns</div>
+                    <div class="model-status status-available">✓ Active</div>
+                </div>
+                <div class="model-card" data-model="texture-detection">
+                    <div class="model-emoji">🔬</div>
+                    <div class="model-name">Texture Analysis</div>
+                    <div class="model-description">Detects surface abnormalities</div>
+                    <div class="model-status status-beta">⚡ Beta</div>
+                </div>
+                <div class="model-card" data-model="severity-scoring">
+                    <div class="model-emoji">⚠️</div>
+                    <div class="model-name">Severity Scoring</div>
+                    <div class="model-description">Rates disease severity levels</div>
+                    <div class="model-status status-available">✓ Active</div>
+                </div>
+                <div class="model-card" data-model="trend-analysis">
+                    <div class="model-emoji">📈</div>
+                    <div class="model-name">Trend Analysis</div>
+                    <div class="model-description">Predicts pattern trends</div>
+                    <div class="model-status status-beta">⚡ Beta</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalAnalyses">500+</div>
+                <div class="stat-label">Total Analyses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="imagesProcessed">1,820</div>
+                <div class="stat-label">Images Processed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avgConfidence">95%</div>
+                <div class="stat-label">Average Confidence</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUsers">2000+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+        </div>
+
+        <!-- Disease Distribution Chart -->
+        <div class="chart-section">
+            <div class="chart-title">📊 Disease Distribution Analysis</div>
+            
+            <div class="chart-bar">
+                <div class="bar-label">
+                    <span>Normal Skin</span>
+                    <span id="pct-normal">24%</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 24%; animation-delay: 0s;">24%</div>
+                </div>
+            </div>
+
+            <div class="chart-bar">
+                <div class="bar-label">
+                    <span>Acne Vulgaris</span>
+                    <span id="pct-acne">22%</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 22%; animation-delay: 0.1s;">22%</div>
+                </div>
+            </div>
+
+            <div class="chart-bar">
+                <div class="bar-label">
+                    <span>Eczema/Dermatitis</span>
+                    <span id="pct-eczema">18%</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 18%; animation-delay: 0.2s;">18%</div>
+                </div>
+            </div>
+
+            <div class="chart-bar">
+                <div class="bar-label">
+                    <span>Psoriasis</span>
+                    <span id="pct-psoriasis">15%</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 15%; animation-delay: 0.3s;">15%</div>
+                </div>
+            </div>
+
+            <div class="chart-bar">
+                <div class="bar-label">
+                    <span>Melanoma</span>
+                    <span id="pct-melanoma">12%</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 12%; animation-delay: 0.4s;">12%</div>
+                </div>
+            </div>
+
+            <div class="chart-bar">
+                <div class="bar-label">
+                    <span>Other Conditions</span>
+                    <span id="pct-other">9%</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 9%; animation-delay: 0.5s;">9%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize theme
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        const currentVariant = localStorage.getItem('themeVariant') || 'default';
+
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (currentVariant !== 'default') {
+                document.body.classList.add(`dark-mode-${currentVariant}`);
+            }
+        }
+
+        // Theme management
+        const themeToggle = document.getElementById('themeToggle');
+        const themeSelector = document.getElementById('themeSelector');
+        const themeOptions = document.querySelectorAll('.theme-option');
+
+        themeToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeSelector.classList.toggle('show');
+        });
+
+        themeOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const theme = option.dataset.theme;
+
+                document.body.classList.remove('dark-mode', 'dark-mode-ocean', 'dark-mode-forest', 'dark-mode-sunset', 'dark-mode-midnight', 'dark-mode-cyberpunk');
+                themeOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+
+                if (theme === 'light') {
+                    localStorage.setItem('theme', 'light');
+                    localStorage.removeItem('themeVariant');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    document.body.classList.add('dark-mode');
+                    if (theme !== 'default') {
+                        document.body.classList.add(`dark-mode-${theme}`);
+                        localStorage.setItem('themeVariant', theme);
+                    } else {
+                        localStorage.removeItem('themeVariant');
+                    }
+                    localStorage.setItem('theme', 'dark');
+                    themeToggle.textContent = '🌙';
+                }
+
+                themeSelector.classList.remove('show');
+            });
+        });
+
+        document.addEventListener('click', () => {
+            themeSelector.classList.remove('show');
+        });
+
+        // Filter and search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            console.log('Searching:', searchTerm);
+        });
+
+        document.getElementById('timeRange').addEventListener('change', (e) => {
+            console.log('Time range:', e.target.value);
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                console.log('Filter:', btn.dataset.filter);
+            });
+        });
+
+        // AI Model selection
+        document.querySelectorAll('.model-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('active');
+                console.log('Model:', card.dataset.model);
+            });
+        });
+
+        // Animate bars on load
+        const barFills = document.querySelectorAll('.bar-fill');
+        barFills.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        });
+    </script>
+</body>
+</html>

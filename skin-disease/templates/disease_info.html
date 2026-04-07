@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Information - Skin Disease Classification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --border-color: #e0e0e0;
+            --accent-1: #667eea;
+            --accent-2: #764ba2;
+            --success-bg: #d4edda;
+            --error-bg: #fee;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --border-color: #333333;
+        }
+
+        body.dark-mode-ocean {
+            --bg-primary: #0f2540;
+            --bg-secondary: #1b4965;
+            --text-primary: #e0f7ff;
+            --text-secondary: #b0d4e3;
+            --accent-1: #00a8cc;
+            --accent-2: #0091ad;
+        }
+
+        body.dark-mode-forest {
+            --bg-primary: #1a3a2a;
+            --bg-secondary: #2d5a3d;
+            --text-primary: #c8f7dc;
+            --text-secondary: #a0d8b8;
+            --accent-1: #52b788;
+            --accent-2: #40916c;
+        }
+
+        body.dark-mode-sunset {
+            --bg-primary: #3a2a25;
+            --bg-secondary: #5c3d3a;
+            --text-primary: #f5e6d3;
+            --text-secondary: #d4a373;
+            --accent-1: #e8a76a;
+            --accent-2: #d4885e;
+        }
+
+        body.dark-mode-midnight {
+            --bg-primary: #0a0a15;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a8a8c0;
+            --accent-1: #4a6fa5;
+            --accent-2: #0f3460;
+        }
+
+        body.dark-mode-cyberpunk {
+            --bg-primary: #0d001a;
+            --bg-secondary: #2a0845;
+            --text-primary: #ff006e;
+            --accent-1: #ff006e;
+            --accent-2: #8338ec;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark-mode-ocean {
+            background: linear-gradient(135deg, #0f2540 0%, #1b4965 100%);
+        }
+
+        body.dark-mode-forest {
+            background: linear-gradient(135deg, #1a3a2a 0%, #2d5a3d 100%);
+        }
+
+        body.dark-mode-sunset {
+            background: linear-gradient(135deg, #3a2a25 0%, #5c3d3a 100%);
+        }
+
+        body.dark-mode-midnight {
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+        }
+
+        body.dark-mode-cyberpunk {
+            background: linear-gradient(135deg, #0d001a 0%, #2a0845 100%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            flex: 1;
+            min-width: 200px;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            background: var(--accent-1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-2);
+            transform: translateX(-3px);
+        }
+
+        #themeToggle {
+            font-size: 24px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        #themeToggle:hover {
+            transform: scale(1.2);
+        }
+
+        /* Advanced Tools Section */
+        .tools-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease;
+        }
+
+        .tools-title {
+            color: var(--accent-1);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .tool-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tool-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        input[type="text"], select {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-1);
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent-1);
+            color: var(--accent-1);
+        }
+
+        .filter-btn.active {
+            background: var(--accent-1);
+            color: white;
+            border-color: var(--accent-1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Disease Grid */
+        .disease-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .disease-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 0;
+            border-left: 4px solid var(--accent-1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .disease-card:hover {
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+            transform: translateY(-8px);
+            border-left-color: var(--accent-2);
+        }
+
+        .disease-card.severity-high {
+            border-left-color: #dc3545;
+        }
+
+        .disease-card.severity-medium {
+            border-left-color: #ffc107;
+        }
+
+        .disease-card.severity-low {
+            border-left-color: #28a745;
+        }
+
+        .disease-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .disease-emoji {
+            font-size: 40px;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .disease-card:hover .disease-emoji {
+            transform: scale(1.15) rotate(10deg);
+        }
+
+        .disease-title-section {
+            flex: 1;
+        }
+
+        .disease-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .disease-severity-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .severity-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .severity-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .severity-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .expand-icon {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+            color: var(--accent-1);
+        }
+
+        .disease-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .disease-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .disease-card.expanded .disease-content {
+            max-height: 600px;
+        }
+
+        .disease-section {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .disease-section:last-child {
+            border-bottom: none;
+        }
+
+        .disease-section-title {
+            font-weight: 700;
+            color: var(--accent-1);
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .disease-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .disease-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .disease-list li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .disease-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-1);
+            font-weight: bold;
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Stats Summary */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            animation: slideDown 0.7s ease;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-top: 3px solid var(--accent-1);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-1);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        .theme-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .theme-selector.show {
+            display: grid;
+        }
+
+        .theme-option {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-align: center;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+
+        .theme-option:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-option.active {
+            border: 2px solid var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* Loading animation */
+        .loader {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Disease Information</h1>
+            <div style="position: relative;">
+                <a href="/" class="btn-back">← Back to Home</a>
+            </div>
+            <div style="position: relative;">
+                <button id="themeToggle" style="background: transparent; border: none; cursor: pointer; font-size: 24px;">🌙</button>
+                <div class="theme-selector" id="themeSelector">
+                    <div class="theme-option" data-theme="light">☀️ Light</div>
+                    <div class="theme-option active" data-theme="default">🌙 Default</div>
+                    <div class="theme-option" data-theme="ocean">🌊 Ocean</div>
+                    <div class="theme-option" data-theme="forest">🌲 Forest</div>
+                    <div class="theme-option" data-theme="sunset">🌅 Sunset</div>
+                    <div class="theme-option" data-theme="midnight">🌃 Midnight</div>
+                    <div class="theme-option" data-theme="cyberpunk">⚡ Cyberpunk</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Tools Section -->
+        <div class="tools-section">
+            <div class="tools-title">🔧 Advanced Tools & Filters</div>
+            <div class="tools-grid">
+                <div class="tool-group">
+                    <div class="tool-label">🔍 Search Disease</div>
+                    <input type="text" id="searchInput" placeholder="Type disease name...">
+                </div>
+                <div class="tool-group">
+                    <div class="tool-label">⚠️ Filter by Severity</div>
+                    <select id="severityFilter">
+                        <option value="">All Severity Levels</option>
+                        <option value="low">Low Risk</option>
+                        <option value="medium">Medium Risk</option>
+                        <option value="high">High Risk</option>
+                    </select>
+                </div>
+            </div>
+            <div class="tool-label" style="margin-bottom: 10px;">🏷️ Quick Filters</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Diseases</button>
+                <button class="filter-btn" data-filter="common">Common</button>
+                <button class="filter-btn" data-filter="seasonal">Seasonal</button>
+                <button class="filter-btn" data-filter="chronic">Chronic</button>
+            </div>
+        </div>
+
+        <!-- Statistics Summary -->
+        <div class="stats-section" id="statsSection">
+            <div class="stat-card">
+                <div class="stat-value" id="totalDiseases">0</div>
+                <div class="stat-label">Total Diseases</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="highRiskCount">0</div>
+                <div class="stat-label">High Risk</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="mediumRiskCount">0</div>
+                <div class="stat-label">Medium Risk</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="lowRiskCount">0</div>
+                <div class="stat-label">Low Risk</div>
+            </div>
+        </div>
+
+        <!-- Disease Grid -->
+        <div class="disease-grid" id="diseaseGrid">
+            <div class="empty-state">
+                <div class="empty-icon">🔄</div>
+                <div class="empty-text">Loading disease information...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize theme
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        const currentVariant = localStorage.getItem('themeVariant') || 'default';
+
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (currentVariant !== 'default') {
+                document.body.classList.add(`dark-mode-${currentVariant}`);
+            }
+        }
+
+        // Theme management
+        const themeToggle = document.getElementById('themeToggle');
+        const themeSelector = document.getElementById('themeSelector');
+        const themeOptions = document.querySelectorAll('.theme-option');
+
+        themeToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeSelector.classList.toggle('show');
+        });
+
+        themeOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const theme = option.dataset.theme;
+
+                document.body.classList.remove('dark-mode', 'dark-mode-ocean', 'dark-mode-forest', 'dark-mode-sunset', 'dark-mode-midnight', 'dark-mode-cyberpunk');
+                themeOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+
+                if (theme === 'light') {
+                    localStorage.setItem('theme', 'light');
+                    localStorage.removeItem('themeVariant');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    document.body.classList.add('dark-mode');
+                    if (theme !== 'default') {
+                        document.body.classList.add(`dark-mode-${theme}`);
+                        localStorage.setItem('themeVariant', theme);
+                    } else {
+                        localStorage.removeItem('themeVariant');
+                    }
+                    localStorage.setItem('theme', 'dark');
+                    themeToggle.textContent = '🌙';
+                }
+
+                themeSelector.classList.remove('show');
+            });
+        });
+
+        document.addEventListener('click', () => {
+            themeSelector.classList.remove('show');
+        });
+
+        // Sample disease data
+        const diseases = {
+            'Eczema/Dermatitis': {
+                emoji: '🔴',
+                severity: 'medium',
+                category: 'common',
+                description: 'Inflammatory skin condition causing itching, redness, and irritation.',
+                symptoms: ['Red, inflamed skin', 'Intense itching', 'Dry, sensitive skin'],
+                causes: ['Allergic reactions', 'Irritants', 'Genetics', 'Stress'],
+                treatments: ['Moisturizers', 'Topical steroids', 'Antihistamines'],
+                prevention: ['Keep skin moisturized', 'Avoid irritants', 'Manage stress']
+            },
+            'Psoriasis': {
+                emoji: '🟡',
+                severity: 'medium',
+                category: 'chronic',
+                description: 'Chronic autoimmune condition causing thick, scaly patches.',
+                symptoms: ['Red, scaly patches', 'Silvery scales', 'Burning sensation'],
+                causes: ['Immune system', 'Genetics', 'Stress'],
+                treatments: ['Topical treatments', 'Phototherapy', 'Systemic therapy'],
+                prevention: ['Manage stress', 'Healthy diet', 'Regular exercise']
+            },
+            'Melanoma': {
+                emoji: '🔴',
+                severity: 'high',
+                category: 'seasonal',
+                description: 'Potentially serious skin cancer requiring professional evaluation.',
+                symptoms: ['Dark spots', 'Asymmetrical shape', 'Size > 6mm'],
+                causes: ['UV exposure', 'Genetics', 'Fair skin'],
+                treatments: ['Biopsy', 'Surgical removal', 'Chemotherapy'],
+                prevention: ['Use SPF 30+', 'Avoid sun', 'Regular checks']
+            },
+            'Acne': {
+                emoji: '🟠',
+                severity: 'low',
+                category: 'common',
+                description: 'Common skin condition caused by clogged pores and bacteria.',
+                symptoms: ['Pimples', 'Blackheads', 'Oily skin'],
+                causes: ['Hormones', 'Bacteria', 'Sebum'],
+                treatments: ['Benzoyl peroxide', 'Salicylic acid', 'Antibiotics'],
+                prevention: ['Daily cleansing', 'Non-comedogenic products']
+            },
+            'Vitiligo': {
+                emoji: '⚪',
+                severity: 'medium',
+                category: 'chronic',
+                description: 'Loss of skin pigmentation in patches.',
+                symptoms: ['White patches', 'Progressive depigmentation'],
+                causes: ['Autoimmune', 'Genetics', 'Stress'],
+                treatments: ['Topical steroids', 'Phototherapy', 'Skin graft'],
+                prevention: ['Sun protection', 'Stress management']
+            },
+            'Ringworm': {
+                emoji: '🟡',
+                severity: 'low',
+                category: 'seasonal',
+                description: 'Fungal infection causing ring-shaped rash.',
+                symptoms: ['Circular rash', 'Itching', 'Scaling'],
+                causes: ['Fungal infection', 'Contact'],
+                treatments: ['Antifungal cream', 'Oral medication'],
+                prevention: ['Hygiene', 'Avoid contact', 'Keep dry']
+            },
+            'Rosacea': {
+                emoji: '🟥',
+                severity: 'medium',
+                category: 'chronic',
+                description: 'Chronic condition causing facial redness and visible blood vessels.',
+                symptoms: ['Facial flushing', 'Visible blood vessels', 'Bumps and pimples'],
+                causes: ['Genetics', 'Triggers', 'Blood vessel reaction'],
+                treatments: ['Topical medications', 'Oral antibiotics', 'Laser therapy'],
+                prevention: ['Identify triggers', 'Sun protection', 'Skincare routine']
+            },
+            'Urticaria (Hives)': {
+                emoji: '🟠',
+                severity: 'low',
+                category: 'common',
+                description: 'Allergic reaction causing raised, itchy welts on skin.',
+                symptoms: ['Red welts', 'Intense itching', 'Swelling'],
+                causes: ['Allergens', 'Food', 'Medications'],
+                treatments: ['Antihistamines', 'Corticosteroids'],
+                prevention: ['Avoid allergens', 'Stress management', 'Hydration']
+            }
+        };
+
+        let expandedCard = null;
+
+        function renderDiseases(filter = 'all', search = '', severity = '') {
+            const diseaseGrid = document.getElementById('diseaseGrid');
+            diseaseGrid.innerHTML = '';
+
+            let filtered = Object.entries(diseases).filter(([name, data]) => {
+                const nameMatch = name.toLowerCase().includes(search.toLowerCase());
+                const filterMatch = filter === 'all' || data.category === filter;
+                const severityMatch = !severity || data.severity === severity;
+                return nameMatch && filterMatch && severityMatch;
+            });
+
+            if (filtered.length === 0) {
+                diseaseGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-text">No diseases found matching your filters</div>
+                    </div>
+                `;
+                updateStats(0, 0, 0, 0);
+                return;
+            }
+
+            let highCount = 0, mediumCount = 0, lowCount = 0;
+
+            filtered.forEach(([name, data], index) => {
+                if (data.severity === 'high') highCount++;
+                else if (data.severity === 'medium') mediumCount++;
+                else lowCount++;
+
+                const card = document.createElement('div');
+                card.className = `disease-card severity-${data.severity}`;
+                card.style.animationDelay = `${index * 0.05}s`;
+                card.innerHTML = `
+                    <div class="disease-header">
+                        <div class="disease-emoji">${data.emoji}</div>
+                        <div class="disease-title-section">
+                            <div class="disease-name">${name}</div>
+                            <span class="disease-severity-badge severity-${data.severity}">${data.severity}</span>
+                        </div>
+                        <div class="expand-icon">▼</div>
+                    </div>
+                    <div class="disease-content">
+                        <div class="disease-section">
+                            <div class="disease-section-title">📝 Description</div>
+                            <p class="disease-description">${data.description}</p>
+                        </div>
+                        ${data.symptoms ? `
+                        <div class="disease-section">
+                            <div class="disease-section-title">⚠️ Symptoms</div>
+                            <ul class="disease-list">
+                                ${data.symptoms.map(s => `<li>${s}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                        ${data.causes ? `
+                        <div class="disease-section">
+                            <div class="disease-section-title">🔍 Causes</div>
+                            <ul class="disease-list">
+                                ${data.causes.map(c => `<li>${c}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                        ${data.treatments ? `
+                        <div class="disease-section">
+                            <div class="disease-section-title">💊 Treatments</div>
+                            <ul class="disease-list">
+                                ${data.treatments.map(t => `<li>${t}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                        ${data.prevention ? `
+                        <div class="disease-section">
+                            <div class="disease-section-title">🛡️ Prevention</div>
+                            <ul class="disease-list">
+                                ${data.prevention.map(p => `<li>${p}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    if (expandedCard && expandedCard !== card) {
+                        expandedCard.classList.remove('expanded');
+                    }
+                    card.classList.toggle('expanded');
+                    expandedCard = card.classList.contains('expanded') ? card : null;
+                });
+
+                diseaseGrid.appendChild(card);
+            });
+
+            updateStats(filtered.length, highCount, mediumCount, lowCount);
+        }
+
+        function updateStats(total, high, medium, low) {
+            document.getElementById('totalDiseases').textContent = total;
+            document.getElementById('highRiskCount').textContent = high;
+            document.getElementById('mediumRiskCount').textContent = medium;
+            document.getElementById('lowRiskCount').textContent = low;
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+            const severity = document.getElementById('severityFilter').value;
+            renderDiseases(filter, e.target.value, severity);
+        });
+
+        document.getElementById('severityFilter').addEventListener('change', (e) => {
+            const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+            const search = document.getElementById('searchInput').value;
+            renderDiseases(filter, search, e.target.value);
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+                const search = document.getElementById('searchInput').value;
+                const severity = document.getElementById('severityFilter').value;
+                renderDiseases(filter, search, severity);
+            });
+        });
+
+        // Initial render
+        renderDiseases();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Comparison - Skin Disease Classification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --border-color: #e0e0e0;
+            --accent-1: #667eea;
+            --accent-2: #764ba2;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --border-color: #333333;
+        }
+
+        body.dark-mode-ocean {
+            --bg-primary: #0f2540;
+            --bg-secondary: #1b4965;
+            --text-primary: #e0f7ff;
+            --text-secondary: #b0d4e3;
+            --accent-1: #00a8cc;
+            --accent-2: #0091ad;
+        }
+
+        body.dark-mode-forest {
+            --bg-primary: #1a3a2a;
+            --bg-secondary: #2d5a3d;
+            --text-primary: #c8f7dc;
+            --text-secondary: #a0d8b8;
+            --accent-1: #52b788;
+            --accent-2: #40916c;
+        }
+
+        body.dark-mode-sunset {
+            --bg-primary: #3a2a25;
+            --bg-secondary: #5c3d3a;
+            --text-primary: #f5e6d3;
+            --text-secondary: #d4a373;
+            --accent-1: #e8a76a;
+            --accent-2: #d4885e;
+        }
+
+        body.dark-mode-midnight {
+            --bg-primary: #0a0a15;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a8a8c0;
+            --accent-1: #4a6fa5;
+            --accent-2: #0f3460;
+        }
+
+        body.dark-mode-cyberpunk {
+            --bg-primary: #0d001a;
+            --bg-secondary: #2a0845;
+            --text-primary: #ff006e;
+            --accent-1: #ff006e;
+            --accent-2: #8338ec;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+            flex-wrap: wrap;
+            animation: slideDown 0.5s ease;
+        }
+
+        h1 {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            background: var(--accent-1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-2);
+            transform: translateX(-3px);
+        }
+
+        #themeToggle {
+            font-size: 24px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        #themeToggle:hover {
+            transform: scale(1.2);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Advanced Options */
+        .advanced-options {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .option-label {
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .option-select, .option-slider {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .slider-value {
+            color: var(--accent-1);
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: var(--bg-secondary);
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-1);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent-1);
+            background: rgba(102, 126, 234, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .upload-label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Comparison Grid */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .image-panel {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            animation: slideDown 0.7s ease;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 400px;
+            background: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-tertiary);
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .image-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: var(--accent-1);
+            font-weight: 700;
+        }
+
+        /* Analysis Section */
+        .analysis-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .analysis-title {
+            color: var(--accent-1);
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .comparison-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .result-card {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-1);
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        .result-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .comparison-metric {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .metric-name {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            color: var(--accent-1);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .metric-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .metric-fill {
+            height: 100%;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: var(--accent-1);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--accent-2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        button:disabled {
+            background: var(--text-tertiary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        /* Theme Selector */
+        .theme-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .theme-selector.show {
+            display: grid;
+        }
+
+        .theme-option {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-align: center;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .theme-option:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-1);
+        }
+
+        .theme-option.active {
+            border: 2px solid var(--text-primary);
+            font-weight: 700;
+            background: var(--accent-1);
+            color: white;
+        }
+
+        /* Zoom Viewer */
+        .zoom-viewer {
+            display: none;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease;
+        }
+
+        .zoom-viewer.active {
+            display: block;
+        }
+
+        .zoom-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .zoom-main {
+            background: var(--bg-primary);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid var(--border-color);
+        }
+
+        .zoom-canvas {
+            width: 100%;
+            height: 400px;
+            cursor: crosshair;
+            display: block;
+        }
+
+        .zoom-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .zoom-info {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .zoom-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .zoom-value {
+            color: var(--accent-1);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .zoom-slider-container {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .zoom-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border-color);
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .zoom-slider::-webkit-slider-thumb:hover {
+            background: var(--accent-2);
+            transform: scale(1.2);
+        }
+
+        .zoom-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .zoom-slider::-moz-range-thumb:hover {
+            background: var(--accent-2);
+            transform: scale(1.2);
+        }
+
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .grid-lines {
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(0deg, rgba(102, 126, 234, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(102, 126, 234, 0.1) 1px, transparent 1px);
+            background-size: 33.333% 33.333%;
+        }
+
+        .selection-box {
+            position: absolute;
+            border: 2px solid var(--accent-1);
+            background: rgba(102, 126, 234, 0.1);
+            pointer-events: none;
+        }
+
+        .zoom-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .zoom-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--accent-1);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .zoom-btn:hover {
+            background: var(--accent-1);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-preview {
+                height: 300px;
+            }
+
+            .zoom-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🔄 Image Comparison</h1>
+                <p style="color: var(--text-secondary); font-size: 13px;">Compare two skin disease images side-by-side</p>
+            </div>
+            <a href="/" class="btn-back">← Back to Home</a>
+            <div style="position: relative;">
+                <button id="themeToggle" style="background: transparent; border: none; cursor: pointer; font-size: 24px;">🌙</button>
+                <div class="theme-selector" id="themeSelector">
+                    <div class="theme-option" data-theme="light">☀️ Light</div>
+                    <div class="theme-option active" data-theme="default">🌙 Default</div>
+                    <div class="theme-option" data-theme="ocean">🌊 Ocean</div>
+                    <div class="theme-option" data-theme="forest">🌲 Forest</div>
+                    <div class="theme-option" data-theme="sunset">🌅 Sunset</div>
+                    <div class="theme-option" data-theme="midnight">🌃 Midnight</div>
+                    <div class="theme-option" data-theme="cyberpunk">⚡ Cyberpunk</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section" id="uploadSection">
+            <div class="upload-area" id="uploadArea1">
+                <div class="upload-icon">📷</div>
+                <label class="upload-label">First Image</label>
+                <p style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 15px;">Click or drag image</p>
+                <input type="file" class="file-input" id="file1" accept="image/*">
+                <button onclick="document.getElementById('file1').click()" style="background: var(--accent-1);">Select Image</button>
+            </div>
+
+            <div class="upload-area" id="uploadArea2">
+                <div class="upload-icon">📷</div>
+                <label class="upload-label">Second Image</label>
+                <p style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 15px;">Click or drag image</p>
+                <input type="file" class="file-input" id="file2" accept="image/*">
+                <button onclick="document.getElementById('file2').click()" style="background: var(--accent-1);">Select Image</button>
+            </div>
+        </div>
+
+        <!-- Advanced Options -->
+        <div class="advanced-options" id="advancedOptions" style="display: none;">
+            <div class="analysis-title">⚙️ Advanced Analysis Options</div>
+            <div class="options-grid">
+                <div class="option-item">
+                    <label class="option-label">Analysis Model</label>
+                    <select class="option-select" id="analysisModel">
+                        <option value="auto">Auto-Select</option>
+                        <option value="color">Color Analysis</option>
+                        <option value="texture">Texture Detection</option>
+                        <option value="morphology">Morphology</option>
+                        <option value="ensemble">Ensemble (All)</option>
+                    </select>
+                </div>
+
+                <div class="option-item">
+                    <label class="option-label">Confidence Threshold</label>
+                    <input type="range" class="option-slider" id="confidenceThreshold" min="0" max="100" value="50">
+                    <div class="slider-value" id="thresholdValue">50%</div>
+                </div>
+
+                <div class="option-item">
+                    <label class="option-label">Comparison Mode</label>
+                    <select class="option-select" id="comparisonMode">
+                        <option value="standard">Standard</option>
+                        <option value="detailed">Detailed</option>
+                        <option value="medical">Medical View</option>
+                    </select>
+                </div>
+
+                <div class="option-item">
+                    <label class="option-label">Detail Level</label>
+                    <select class="option-select" id="detailLevel">
+                        <option value="summary">Summary</option>
+                        <option value="normal">Normal</option>
+                        <option value="detailed">Detailed</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button onclick="analyzeImages()" style="background: var(--accent-1); flex: 1;">🔍 Analyze Images</button>
+                <button onclick="clearAdvancedOptions()" style="background: #e74c3c; flex: 1;">🧹 Clear Options</button>
+            </div>
+        </div>
+
+        <!-- Zoom Viewer -->
+        <div class="zoom-viewer" id="zoomViewer">
+            <div class="analysis-title">🔍 Detailed Zoom Viewer</div>
+            <div class="zoom-container">
+                <div class="zoom-main">
+                    <canvas class="zoom-canvas" id="zoomCanvas"></canvas>
+                    <div class="grid-overlay">
+                        <div class="grid-lines"></div>
+                    </div>
+                    <div class="selection-box" id="selectionBox" style="display: none;"></div>
+                </div>
+                <div class="zoom-controls">
+                    <div class="zoom-info">
+                        <label class="zoom-label">Zoom Level</label>
+                        <div class="zoom-value" id="zoomLevel">1.0x</div>
+                    </div>
+                    <div class="zoom-slider-container">
+                        <label class="zoom-label">Zoom</label>
+                        <input type="range" class="zoom-slider" id="zoomSlider" min="1" max="5" value="1" step="0.1">
+                    </div>
+                    <div class="zoom-slider-container">
+                        <label class="zoom-label">Pan X</label>
+                        <input type="range" class="zoom-slider" id="panXSlider" min="0" max="100" value="50">
+                    </div>
+                    <div class="zoom-slider-container">
+                        <label class="zoom-label">Pan Y</label>
+                        <input type="range" class="zoom-slider" id="panYSlider" min="0" max="100" value="50">
+                    </div>
+                    <div class="zoom-info">
+                        <label class="zoom-label">Selected Image</label>
+                        <div class="zoom-value" id="zoomImageLabel">Image 1</div>
+                    </div>
+                </div>
+            </div>
+            <div class="zoom-buttons">
+                <button class="zoom-btn" onclick="zoomIn()">🔍+ Zoom In</button>
+                <button class="zoom-btn" onclick="zoomOut()">🔍- Zoom Out</button>
+                <button class="zoom-btn" onclick="resetZoom()">↺ Reset</button>
+                <button class="zoom-btn" onclick="closeZoomViewer()">✕ Close</button>
+            </div>
+        </div>
+
+        <!-- Comparison Grid -->
+        <div id="comparisonContainer" style="display: none;">
+            <div class="comparison-grid">
+                <div class="image-panel">
+                    <div class="image-preview" id="preview1">
+                        <span>Image 1</span>
+                    </div>
+                    <div class="image-info" id="info1">
+                        <div class="info-item">
+                            <span class="info-label">Disease:</span>
+                            <span class="info-value" id="disease1">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Confidence:</span>
+                            <span class="info-value" id="conf1">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Severity:</span>
+                            <span class="info-value" id="sev1">-</span>
+                        </div>
+                    </div>
+                    <button onclick="openZoomViewer(1)" style="margin-top: 12px; width: 100%; background: var(--accent-1);">🔍 View Details</button>
+                </div>
+
+                <div class="image-panel">
+                    <div class="image-preview" id="preview2">
+                        <span>Image 2</span>
+                    </div>
+                    <div class="image-info" id="info2">
+                        <div class="info-item">
+                            <span class="info-label">Disease:</span>
+                            <span class="info-value" id="disease2">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Confidence:</span>
+                            <span class="info-value" id="conf2">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Severity:</span>
+                            <span class="info-value" id="sev2">-</span>
+                        </div>
+                    </div>
+                    <button onclick="openZoomViewer(2)" style="margin-top: 12px; width: 100%; background: var(--accent-1);">🔍 View Details</button>
+                </div>
+            </div>
+
+            <!-- Analysis Section -->
+            <div class="analysis-section">
+                <div class="analysis-title">📊 Comparison Analysis</div>
+                <div class="comparison-results">
+                    <div class="result-card">
+                        <div class="result-label">Same Disease</div>
+                        <div class="result-value" id="sameDiseaseResult">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Confidence Difference</div>
+                        <div class="result-value" id="confDiffResult">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Similarity Score</div>
+                        <div class="result-value" id="similarityResult">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Risk Assessment</div>
+                        <div class="result-value" id="riskResult">-</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <div class="analysis-title">Detailed Metrics</div>
+                    <div class="comparison-metric">
+                        <div class="metric-name">Image 1 Confidence</div>
+                        <div class="metric-value" id="metricConf1">0%</div>
+                        <div class="metric-bar"><div class="metric-fill" id="metricFill1" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="comparison-metric">
+                        <div class="metric-name">Image 2 Confidence</div>
+                        <div class="metric-value" id="metricConf2">0%</div>
+                        <div class="metric-bar"><div class="metric-fill" id="metricFill2" style="width: 0%;"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button onclick="resetComparison()">🔄 New Comparison</button>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState">
+            <div class="empty-state">
+                <div class="empty-icon">🖼️</div>
+                <div class="empty-text">Upload two images to start comparing</div>
+                <p style="font-size: 14px; color: var(--text-secondary);">Compare skin disease images side-by-side for detailed analysis</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize theme
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        const currentVariant = localStorage.getItem('themeVariant') || 'default';
+
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (currentVariant !== 'default') {
+                document.body.classList.add(`dark-mode-${currentVariant}`);
+            }
+        }
+
+        // Theme management
+        const themeToggle = document.getElementById('themeToggle');
+        const themeSelector = document.getElementById('themeSelector');
+        const themeOptions = document.querySelectorAll('.theme-option');
+
+        themeToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeSelector.classList.toggle('show');
+        });
+
+        themeOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const theme = option.dataset.theme;
+
+                document.body.classList.remove('dark-mode', 'dark-mode-ocean', 'dark-mode-forest', 'dark-mode-sunset', 'dark-mode-midnight', 'dark-mode-cyberpunk');
+                themeOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+
+                if (theme === 'light') {
+                    localStorage.setItem('theme', 'light');
+                    localStorage.removeItem('themeVariant');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    document.body.classList.add('dark-mode');
+                    if (theme !== 'default') {
+                        document.body.classList.add(`dark-mode-${theme}`);
+                        localStorage.setItem('themeVariant', theme);
+                    } else {
+                        localStorage.removeItem('themeVariant');
+                    }
+                    localStorage.setItem('theme', 'dark');
+                    themeToggle.textContent = '🌙';
+                }
+
+                themeSelector.classList.remove('show');
+            });
+        });
+
+        document.addEventListener('click', () => {
+            themeSelector.classList.remove('show');
+        });
+
+        // Comparison data
+        let images = { 1: null, 2: null };
+        let predictions = { 1: null, 2: null };
+        let autoAnalyze = true;
+        let zoomState = {
+            currentImage: null,
+            zoomLevel: 1.0,
+            panX: 0.5,
+            panY: 0.5,
+            img: null
+        };
+
+        // Setup file inputs
+        ['file1', 'file2'].forEach(fileId => {
+            const fileInput = document.getElementById(fileId);
+            const imageNum = fileId.replace('file', '');
+
+            fileInput.addEventListener('change', (e) => {
+                handleImageUpload(e, imageNum);
+            });
+        });
+
+        // Confidence threshold slider
+        document.getElementById('confidenceThreshold').addEventListener('input', (e) => {
+            document.getElementById('thresholdValue').textContent = e.target.value + '%';
+        });
+
+        // Zoom controls
+        document.getElementById('zoomSlider').addEventListener('input', (e) => {
+            zoomState.zoomLevel = parseFloat(e.target.value);
+            document.getElementById('zoomLevel').textContent = zoomState.zoomLevel.toFixed(1) + 'x';
+            drawZoomCanvas();
+        });
+
+        document.getElementById('panXSlider').addEventListener('input', (e) => {
+            zoomState.panX = parseFloat(e.target.value) / 100;
+            drawZoomCanvas();
+        });
+
+        document.getElementById('panYSlider').addEventListener('input', (e) => {
+            zoomState.panY = parseFloat(e.target.value) / 100;
+            drawZoomCanvas();
+        });
+
+        // Setup drag and drop
+        ['uploadArea1', 'uploadArea2'].forEach(areaId => {
+            const area = document.getElementById(areaId);
+            const imageNum = areaId.replace('uploadArea', '');
+
+            area.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                area.classList.add('dragover');
+            });
+
+            area.addEventListener('dragleave', () => {
+                area.classList.remove('dragover');
+            });
+
+            area.addEventListener('drop', (e) => {
+                e.preventDefault();
+                area.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    document.getElementById(`file${imageNum}`).files = files;
+                    handleImageUpload({ target: { files } }, imageNum);
+                }
+            });
+        });
+
+        function handleImageUpload(event, imageNum) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            const file = files[0];
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    images[imageNum] = file;
+                    const preview = document.getElementById(`preview${imageNum}`);
+                    preview.innerHTML = '';
+                    preview.appendChild(img);
+
+                    // Show advanced options when both images are uploaded
+                    if (images[1] && images[2]) {
+                        document.getElementById('advancedOptions').style.display = 'block';
+                        autoAnalyze = false;
+                    }
+                };
+                img.src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function analyzeImages() {
+            if (!images[1] || !images[2]) {
+                alert('Please upload both images first');
+                return;
+            }
+
+            document.getElementById('advancedOptions').style.display = 'none';
+            
+            // Analyze both images
+            analyzeImage(images[1], 1);
+            analyzeImage(images[2], 2);
+        }
+
+        function analyzeImage(file, imageNum) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                predictions[imageNum] = data;
+                updateImageInfo(data, imageNum);
+                if (predictions[1] && predictions[2]) {
+                    showComparison();
+                }
+            })
+            .catch(error => {
+                console.error('Analysis error:', error);
+                alert('Error analyzing image');
+            });
+        }
+
+        function updateImageInfo(data, imageNum) {
+            document.getElementById(`disease${imageNum}`).textContent = data.disease || 'Unknown';
+            document.getElementById(`conf${imageNum}`).textContent = `${data.confidence || 0}%`;
+            document.getElementById(`sev${imageNum}`).textContent = data.severity || 'Unknown';
+        }
+
+        function showComparison() {
+            const empty = document.getElementById('emptyState');
+            const container = document.getElementById('comparisonContainer');
+            const upload = document.getElementById('uploadSection');
+            const advOptions = document.getElementById('advancedOptions');
+
+            empty.style.display = 'none';
+            container.style.display = 'block';
+            upload.style.display = 'none';
+            advOptions.style.display = 'none';
+
+            const pred1 = predictions[1];
+            const pred2 = predictions[2];
+
+            // Get settings
+            const comparisonMode = document.getElementById('comparisonMode').value;
+            const detailLevel = document.getElementById('detailLevel').value;
+
+            // Calculate metrics
+            const sameDiseaseValue = pred1.disease === pred2.disease ? '✓ Yes' : '✗ No';
+            const confDiff = Math.abs((pred1.confidence || 0) - (pred2.confidence || 0));
+            const similarity = Math.round(((100 - confDiff) * (pred1.disease === pred2.disease ? 1.2 : 0.8)) / 100);
+            const riskLevel = Math.max(pred1.confidence || 0, pred2.confidence || 0) > 75 ? '⚠️ High' : 'ℹ️ Medium';
+
+            document.getElementById('sameDiseaseResult').textContent = sameDiseaseValue;
+            document.getElementById('confDiffResult').textContent = `${confDiff.toFixed(1)}%`;
+            document.getElementById('similarityResult').textContent = `${similarity}%`;
+            document.getElementById('riskResult').textContent = riskLevel;
+
+            document.getElementById('metricConf1').textContent = `${pred1.confidence || 0}%`;
+            document.getElementById('metricFill1').style.width = `${pred1.confidence || 0}%`;
+
+            document.getElementById('metricConf2').textContent = `${pred2.confidence || 0}%`;
+            document.getElementById('metricFill2').style.width = `${pred2.confidence || 0}%`;
+
+            // Log analysis settings
+            console.log('Analysis Settings:', {
+                model: document.getElementById('analysisModel').value,
+                threshold: document.getElementById('confidenceThreshold').value,
+                mode: comparisonMode,
+                detail: detailLevel
+            });
+        }
+
+        function openZoomViewer(imageNum) {
+            zoomState.currentImage = imageNum;
+            zoomState.zoomLevel = 1.0;
+            zoomState.panX = 0.5;
+            zoomState.panY = 0.5;
+
+            // Get the preview image
+            const preview = document.getElementById(`preview${imageNum}`);
+            const img = preview.querySelector('img');
+
+            if (!img) {
+                alert('Please select an image first');
+                return;
+            }
+
+            // Create a copy of the image for zoom viewer
+            zoomState.img = new Image();
+            zoomState.img.onload = () => {
+                document.getElementById('zoomViewer').classList.add('active');
+                document.getElementById('zoomImageLabel').textContent = `Image ${imageNum}`;
+                document.getElementById('zoomSlider').value = 1;
+                document.getElementById('panXSlider').value = 50;
+                document.getElementById('panYSlider').value = 50;
+                document.getElementById('zoomLevel').textContent = '1.0x';
+                drawZoomCanvas();
+            };
+            zoomState.img.src = img.src;
+        }
+
+        function drawZoomCanvas() {
+            const canvas = document.getElementById('zoomCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            if (!zoomState.img) return;
+
+            // Clear canvas
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg-primary');
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Calculate dimensions
+            const imgWidth = zoomState.img.width;
+            const imgHeight = zoomState.img.height;
+            const zoom = zoomState.zoomLevel;
+
+            // Calculate visible area
+            const viewWidth = canvas.width / zoom;
+            const viewHeight = canvas.height / zoom;
+
+            // Calculate source position (where to start drawing from)
+            const srcX = (imgWidth - viewWidth) * zoomState.panX;
+            const srcY = (imgHeight - viewHeight) * zoomState.panY;
+
+            // Draw the zoomed image
+            ctx.drawImage(
+                zoomState.img,
+                srcX, srcY, viewWidth, viewHeight,
+                0, 0, canvas.width, canvas.height
+            );
+
+            // Draw crosshair
+            ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--accent-1');
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+        }
+
+        function zoomIn() {
+            const slider = document.getElementById('zoomSlider');
+            slider.value = Math.min(5, parseFloat(slider.value) + 0.5);
+            slider.dispatchEvent(new Event('input'));
+        }
+
+        function zoomOut() {
+            const slider = document.getElementById('zoomSlider');
+            slider.value = Math.max(1, parseFloat(slider.value) - 0.5);
+            slider.dispatchEvent(new Event('input'));
+        }
+
+        function resetZoom() {
+            document.getElementById('zoomSlider').value = 1;
+            document.getElementById('panXSlider').value = 50;
+            document.getElementById('panYSlider').value = 50;
+            zoomState.zoomLevel = 1.0;
+            zoomState.panX = 0.5;
+            zoomState.panY = 0.5;
+            document.getElementById('zoomLevel').textContent = '1.0x';
+            drawZoomCanvas();
+        }
+
+        function closeZoomViewer() {
+            document.getElementById('zoomViewer').classList.remove('active');
+            zoomState.currentImage = null;
+            zoomState.img = null;
+        }
+
+        function clearAdvancedOptions() {
+            document.getElementById('analysisModel').value = 'auto';
+            document.getElementById('confidenceThreshold').value = 50;
+            document.getElementById('thresholdValue').textContent = '50%';
+            document.getElementById('comparisonMode').value = 'standard';
+            document.getElementById('detailLevel').value = 'normal';
+        }
+
+        function resetComparison() {
+            images = { 1: null, 2: null };
+            predictions = { 1: null, 2: null };
+
+            document.getElementById('file1').value = '';
+            document.getElementById('file2').value = '';
+            document.getElementById('preview1').innerHTML = '<span>Image 1</span>';
+            document.getElementById('preview2').innerHTML = '<span>Image 2</span>';
+
+            clearAdvancedOptions();
+            closeZoomViewer();
+
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('comparisonContainer').style.display = 'none';
+            document.getElementById('uploadSection').style.display = 'grid';
+            document.getElementById('advancedOptions').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Gallery - Skin Disease Classification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --border-color: #e0e0e0;
+            --accent-1: #667eea;
+            --accent-2: #764ba2;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --border-color: #333333;
+        }
+
+        body.dark-mode-ocean {
+            --bg-primary: #0f2540;
+            --bg-secondary: #1b4965;
+            --text-primary: #e0f7ff;
+            --text-secondary: #b0d4e3;
+            --accent-1: #00a8cc;
+            --accent-2: #0091ad;
+        }
+
+        body.dark-mode-forest {
+            --bg-primary: #1a3a2a;
+            --bg-secondary: #2d5a3d;
+            --text-primary: #c8f7dc;
+            --text-secondary: #a0d8b8;
+            --accent-1: #52b788;
+            --accent-2: #40916c;
+        }
+
+        body.dark-mode-sunset {
+            --bg-primary: #3a2a25;
+            --bg-secondary: #5c3d3a;
+            --text-primary: #f5e6d3;
+            --text-secondary: #d4a373;
+            --accent-1: #e8a76a;
+            --accent-2: #d4885e;
+        }
+
+        body.dark-mode-midnight {
+            --bg-primary: #0a0a15;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a8a8c0;
+            --accent-1: #4a6fa5;
+            --accent-2: #0f3460;
+        }
+
+        body.dark-mode-cyberpunk {
+            --bg-primary: #0d001a;
+            --bg-secondary: #2a0845;
+            --text-primary: #ff006e;
+            --accent-1: #ff006e;
+            --accent-2: #8338ec;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark-mode-ocean {
+            background: linear-gradient(135deg, #0f2540 0%, #1b4965 100%);
+        }
+
+        body.dark-mode-forest {
+            background: linear-gradient(135deg, #1a3a2a 0%, #2d5a3d 100%);
+        }
+
+        body.dark-mode-sunset {
+            background: linear-gradient(135deg, #3a2a25 0%, #5c3d3a 100%);
+        }
+
+        body.dark-mode-midnight {
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+        }
+
+        body.dark-mode-cyberpunk {
+            background: linear-gradient(135deg, #0d001a 0%, #2a0845 100%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+            flex-wrap: wrap;
+            animation: slideDown 0.5s ease;
+        }
+
+        h1 {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            background: var(--accent-1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-2);
+            transform: translateX(-3px);
+        }
+
+        #themeToggle {
+            font-size: 24px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        #themeToggle:hover {
+            transform: scale(1.2);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Advanced Tools Section */
+        .tools-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease;
+        }
+
+        .tools-title {
+            color: var(--accent-1);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .tool-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tool-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        input[type="text"], select {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-1);
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent-1);
+            color: var(--accent-1);
+        }
+
+        .filter-btn.active {
+            background: var(--accent-1);
+            color: white;
+            border-color: var(--accent-1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        /* AI Models Section */
+        .ai-models-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--accent-1);
+            animation: slideDown 0.7s ease;
+        }
+
+        .models-title {
+            color: var(--accent-1);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .model-card {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .model-card:hover {
+            border-color: var(--accent-1);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .model-card.active {
+            border-color: var(--accent-1);
+            background: var(--bg-secondary);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .model-emoji {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .model-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .model-description {
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .model-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-unavailable {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-beta {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            animation: slideDown 0.8s ease;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-top: 3px solid var(--accent-1);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-1);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .gallery-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+            border: 2px solid var(--accent-1);
+        }
+
+        .gallery-item-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-item:hover .gallery-item-image {
+            transform: scale(1.05);
+        }
+
+        .gallery-item-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-item-image::after {
+            opacity: 1;
+        }
+
+        .gallery-item-info {
+            padding: 15px;
+        }
+
+        .gallery-item-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .gallery-item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .gallery-item-count {
+            background: var(--accent-1);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .gallery-item-confidence {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .progress-bar-small {
+            width: 100%;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill-small {
+            height: 100%;
+            background: var(--gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Empty State */
+        .empty-gallery {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-tertiary);
+            grid-column: 1 / -1;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .empty-gallery-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .empty-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        /* Theme Selector */
+        .theme-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .theme-selector.show {
+            display: grid;
+        }
+
+        .theme-option {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-align: center;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+
+        .theme-option:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-option.active {
+            border: 2px solid var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-title {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .modal-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-stats {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .modal-stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-stat-label {
+            color: var(--text-secondary);
+        }
+
+        .modal-stat-value {
+            color: var(--accent-1);
+            font-weight: 700;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📷 Advanced Gallery</h1>
+                <p style="color: var(--text-secondary); font-size: 13px;">Browse & analyze disease images with AI</p>
+            </div>
+            <a href="/" class="btn-back">← Back to Home</a>
+            <div style="position: relative;">
+                <button id="themeToggle" style="background: transparent; border: none; cursor: pointer; font-size: 24px;">🌙</button>
+                <div class="theme-selector" id="themeSelector">
+                    <div class="theme-option" data-theme="light">☀️ Light</div>
+                    <div class="theme-option active" data-theme="default">🌙 Default</div>
+                    <div class="theme-option" data-theme="ocean">🌊 Ocean</div>
+                    <div class="theme-option" data-theme="forest">🌲 Forest</div>
+                    <div class="theme-option" data-theme="sunset">🌅 Sunset</div>
+                    <div class="theme-option" data-theme="midnight">🌃 Midnight</div>
+                    <div class="theme-option" data-theme="cyberpunk">⚡ Cyberpunk</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Tools Section -->
+        <div class="tools-section">
+            <div class="tools-title">🔧 Advanced Tools & Filters</div>
+            <div class="tools-grid">
+                <div class="tool-group">
+                    <div class="tool-label">🔍 Search Gallery</div>
+                    <input type="text" id="searchInput" placeholder="Search by disease...">
+                </div>
+                <div class="tool-group">
+                    <div class="tool-label">📊 Sort By</div>
+                    <select id="sortInput">
+                        <option value="name">Disease Name (A-Z)</option>
+                        <option value="count">Image Count (High to Low)</option>
+                        <option value="recent">Recently Added</option>
+                    </select>
+                </div>
+            </div>
+            <div class="tool-label" style="margin-bottom: 10px;">🏷️ Quick Filters</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Categories</button>
+                <button class="filter-btn" data-filter="common">Common</button>
+                <button class="filter-btn" data-filter="serious">Serious</button>
+                <button class="filter-btn" data-filter="chronic">Chronic</button>
+            </div>
+        </div>
+
+        <!-- AI Models Section -->
+        <div class="ai-models-section">
+            <div class="models-title">🤖 AI Detection Models</div>
+            <div class="models-grid">
+                <div class="model-card active" data-model="color-analysis">
+                    <div class="model-emoji">🎨</div>
+                    <div class="model-name">Color Analysis</div>
+                    <div class="model-description">Analyzes skin color patterns and pigmentation changes</div>
+                    <div class="model-status status-available">✓ Active</div>
+                </div>
+                <div class="model-card" data-model="texture-detection">
+                    <div class="model-emoji">🔬</div>
+                    <div class="model-name">Texture Detection</div>
+                    <div class="model-description">Identifies surface texture abnormalities and roughness</div>
+                    <div class="model-status status-beta">⚡ Beta</div>
+                </div>
+                <div class="model-card" data-model="ml-classification">
+                    <div class="model-emoji">🧠</div>
+                    <div class="model-name">ML Classification</div>
+                    <div class="model-description">Deep learning model trained on 10,000+ images</div>
+                    <div class="model-status status-unavailable">⏳ Installing</div>
+                </div>
+                <div class="model-card" data-model="edge-detection">
+                    <div class="model-emoji">⚡</div>
+                    <div class="model-name">Edge Detection</div>
+                    <div class="model-description">Identifies boundaries and lesion edges with high precision</div>
+                    <div class="model-status status-beta">⚡ Beta</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="stats-section" id="statsSection">
+            <div class="stat-card">
+                <div class="stat-value" id="totalImages">0</div>
+                <div class="stat-label">Total Images</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="categoriesCount">0</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgConfidence">0%</div>
+                <div class="stat-label">Avg Confidence</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="modelsActive">1</div>
+                <div class="stat-label">Models Active</div>
+            </div>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid" id="galleryGrid">
+            <div class="empty-gallery">
+                <div class="empty-gallery-icon">📁</div>
+                <div class="empty-text">No images in gallery</div>
+                <p>Upload images to start analyzing</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-title" id="modalTitle">Category Details</div>
+            <div class="modal-description" id="modalDescription"></div>
+            <div class="modal-stats">
+                <div class="modal-stat-item">
+                    <span class="modal-stat-label">Total Images:</span>
+                    <span class="modal-stat-value" id="modalImageCount">0</span>
+                </div>
+                <div class="modal-stat-item">
+                    <span class="modal-stat-label">Avg Confidence:</span>
+                    <span class="modal-stat-value" id="modalConfidence">0%</span>
+                </div>
+                <div class="modal-stat-item">
+                    <span class="modal-stat-label">Last Updated:</span>
+                    <span class="modal-stat-value" id="modalUpdated">Today</span>
+                </div>
+                <div class="modal-stat-item">
+                    <span class="modal-stat-label">AI Model Used:</span>
+                    <span class="modal-stat-value" id="modalModel">Color Analysis</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize theme
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        const currentVariant = localStorage.getItem('themeVariant') || 'default';
+
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (currentVariant !== 'default') {
+                document.body.classList.add(`dark-mode-${currentVariant}`);
+            }
+        }
+
+        // Theme management
+        const themeToggle = document.getElementById('themeToggle');
+        const themeSelector = document.getElementById('themeSelector');
+        const themeOptions = document.querySelectorAll('.theme-option');
+
+        themeToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeSelector.classList.toggle('show');
+        });
+
+        themeOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const theme = option.dataset.theme;
+
+                document.body.classList.remove('dark-mode', 'dark-mode-ocean', 'dark-mode-forest', 'dark-mode-sunset', 'dark-mode-midnight', 'dark-mode-cyberpunk');
+                themeOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+
+                if (theme === 'light') {
+                    localStorage.setItem('theme', 'light');
+                    localStorage.removeItem('themeVariant');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    document.body.classList.add('dark-mode');
+                    if (theme !== 'default') {
+                        document.body.classList.add(`dark-mode-${theme}`);
+                        localStorage.setItem('themeVariant', theme);
+                    } else {
+                        localStorage.removeItem('themeVariant');
+                    }
+                    localStorage.setItem('theme', 'dark');
+                    themeToggle.textContent = '🌙';
+                }
+
+                themeSelector.classList.remove('show');
+            });
+        });
+
+        document.addEventListener('click', () => {
+            themeSelector.classList.remove('show');
+        });
+
+        // Sample gallery data
+        const galleryData = [
+            { name: 'Acne Vulgaris', emoji: '🟡', category: 'common', count: 45, confidence: 92, model: 'Color Analysis' },
+            { name: 'Eczema/Dermatitis', emoji: '🔴', category: 'common', count: 38, confidence: 88, model: 'Color Analysis' },
+            { name: 'Psoriasis', emoji: '🟠', category: 'chronic', count: 32, confidence: 85, model: 'Texture Detection' },
+            { name: 'Melanoma', emoji: '⚫', category: 'serious', count: 28, confidence: 94, model: 'ML Classification' },
+            { name: 'Vitiligo', emoji: '⚪', category: 'chronic', count: 25, confidence: 80, model: 'Color Analysis' },
+            { name: 'Rosacea', emoji: '🟥', category: 'chronic', count: 22, confidence: 83, model: 'Texture Detection' },
+            { name: 'Ringworm', emoji: '🟡', category: 'common', count: 35, confidence: 89, model: 'Edge Detection' },
+            { name: 'Urticaria', emoji: '🟠', category: 'common', count: 40, confidence: 86, model: 'Color Analysis' }
+        ];
+
+        let filteredData = [...galleryData];
+        let activeModels = ['color-analysis'];
+
+        function renderGallery() {
+            const galleryGrid = document.getElementById('galleryGrid');
+            galleryGrid.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                galleryGrid.innerHTML = `
+                    <div class="empty-gallery">
+                        <div class="empty-gallery-icon">🔍</div>
+                        <div class="empty-text">No images found</div>
+                        <p>Try adjusting your filters</p>
+                    </div>
+                `;
+                updateStats(0, 0, 0);
+                return;
+            }
+
+            filteredData.forEach((item, index) => {
+                const item_el = document.createElement('div');
+                item_el.className = 'gallery-item';
+                item_el.style.animationDelay = `${index * 0.06}s`;
+                item_el.innerHTML = `
+                    <div class="gallery-item-image">${item.emoji}</div>
+                    <div class="gallery-item-info">
+                        <div class="gallery-item-title">${item.name}</div>
+                        <div class="gallery-item-meta">
+                            <span class="gallery-item-confidence">${item.confidence}% confidence</span>
+                            <span class="gallery-item-count">${item.count}</span>
+                        </div>
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" style="width: ${item.confidence}%"></div>
+                        </div>
+                    </div>
+                `;
+                item_el.addEventListener('click', () => showModal(item));
+                galleryGrid.appendChild(item_el);
+            });
+
+            updateStats(filteredData.length, new Set(filteredData.map(d => d.category)).size, Math.round(filteredData.reduce((a, b) => a + b.confidence, 0) / filteredData.length));
+        }
+
+        function filterGallery() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const sort = document.getElementById('sortInput').value;
+            const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+
+            filteredData = galleryData.filter(item => {
+                const nameMatch = item.name.toLowerCase().includes(search);
+                const filterMatch = filter === 'all' || item.category === filter;
+                return nameMatch && filterMatch;
+            });
+
+            if (sort === 'count') {
+                filteredData.sort((a, b) => b.count - a.count);
+            } else if (sort === 'name') {
+                filteredData.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sort === 'recent') {
+                filteredData.reverse();
+            }
+
+            renderGallery();
+        }
+
+        function updateStats(total, categories, avgConfidence) {
+            document.getElementById('totalImages').textContent = total;
+            document.getElementById('categoriesCount').textContent = categories;
+            document.getElementById('avgConfidence').textContent = avgConfidence + '%';
+            document.getElementById('modelsActive').textContent = activeModels.length;
+        }
+
+        function showModal(item) {
+            document.getElementById('modalTitle').textContent = item.name;
+            document.getElementById('modalDescription').textContent = `Detailed analysis of ${item.name} images in the gallery.`;
+            document.getElementById('modalImageCount').textContent = item.count;
+            document.getElementById('modalConfidence').textContent = item.confidence + '%';
+            document.getElementById('modalModel').textContent = item.model;
+            document.getElementById('categoryModal').classList.add('show');
+        }
+
+        document.getElementById('modalClose').addEventListener('click', () => {
+            document.getElementById('categoryModal').classList.remove('show');
+        });
+
+        document.getElementById('categoryModal').addEventListener('click', (e) => {
+            if (e.target.id === 'categoryModal') {
+                document.getElementById('categoryModal').classList.remove('show');
+            }
+        });
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterGallery);
+        document.getElementById('sortInput').addEventListener('change', filterGallery);
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterGallery();
+            });
+        });
+
+        document.querySelectorAll('.model-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('active');
+                const model = card.dataset.model;
+                if (card.classList.contains('active')) {
+                    activeModels.push(model);
+                } else {
+                    activeModels = activeModels.filter(m => m !== model);
+                }
+                updateStats(filteredData.length, new Set(filteredData.map(d => d.category)).size, Math.round(filteredData.reduce((a, b) => a + b.confidence, 0) / filteredData.length));
+            });
+        });
+
+        // Initial render
+        renderGallery();
+    </script>
+</body>
+</html>

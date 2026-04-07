@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Analysis - Skin Disease Classification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --border-color: #e0e0e0;
+            --accent-1: #667eea;
+            --accent-2: #764ba2;
+            --success-bg: #d4edda;
+            --success-text: #155724;
+            --error-bg: #fee;
+            --error-text: #c33;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --border-color: #333333;
+            --accent-1: #667eea;
+            --accent-2: #764ba2;
+        }
+
+        body.dark-mode-ocean {
+            --bg-primary: #0f2540;
+            --bg-secondary: #1b4965;
+            --text-primary: #e0f7ff;
+            --text-secondary: #b0d4e3;
+            --accent-1: #00a8cc;
+            --accent-2: #0091ad;
+        }
+
+        body.dark-mode-forest {
+            --bg-primary: #1a3a2a;
+            --bg-secondary: #2d5a3d;
+            --text-primary: #c8f7dc;
+            --text-secondary: #a0d8b8;
+            --accent-1: #52b788;
+            --accent-2: #40916c;
+        }
+
+        body.dark-mode-sunset {
+            --bg-primary: #3a2a25;
+            --bg-secondary: #5c3d3a;
+            --text-primary: #f5e6d3;
+            --text-secondary: #d4a373;
+            --accent-1: #e8a76a;
+            --accent-2: #d4885e;
+        }
+
+        body.dark-mode-midnight {
+            --bg-primary: #0a0a15;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a8a8c0;
+            --accent-1: #4a6fa5;
+            --accent-2: #0f3460;
+        }
+
+        body.dark-mode-cyberpunk {
+            --bg-primary: #0d001a;
+            --bg-secondary: #2a0845;
+            --text-primary: #ff006e;
+            --accent-1: #ff006e;
+            --accent-2: #8338ec;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark-mode-ocean {
+            background: linear-gradient(135deg, #0f2540 0%, #1b4965 100%);
+        }
+
+        body.dark-mode-forest {
+            background: linear-gradient(135deg, #1a3a2a 0%, #2d5a3d 100%);
+        }
+
+        body.dark-mode-sunset {
+            background: linear-gradient(135deg, #3a2a25 0%, #5c3d3a 100%);
+        }
+
+        body.dark-mode-midnight {
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+        }
+
+        body.dark-mode-cyberpunk {
+            background: linear-gradient(135deg, #0d001a 0%, #2a0845 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            background: var(--accent-1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            gap: 5px;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-2);
+            transform: translateX(-3px);
+        }
+
+        #themeToggle {
+            font-size: 24px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        #themeToggle:hover {
+            transform: scale(1.2);
+        }
+
+        .upload-area {
+            border: 3px dashed var(--accent-1);
+            border-radius: 15px;
+            padding: 60px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 30px;
+            background: var(--bg-secondary);
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-2);
+            transform: translateY(-2px);
+        }
+
+        .upload-area.drag-over {
+            background: var(--accent-1);
+            opacity: 0.15;
+            border-color: var(--accent-1);
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            color: var(--text-tertiary);
+            font-size: 13px;
+        }
+
+        .file-list {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .file-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .remove-file {
+            background: var(--error-bg);
+            color: var(--error-text);
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .remove-file:hover {
+            opacity: 0.8;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-analyze {
+            background: var(--gradient);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-analyze:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-analyze:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-clear {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-clear:hover {
+            opacity: 0.8;
+        }
+
+        .btn-download {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border: none;
+        }
+
+        .btn-download:hover {
+            opacity: 0.9;
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .progress-container {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .progress-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: var(--gradient);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-1);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        .results-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border-color);
+            display: none;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .result-card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid var(--accent-1);
+            transition: all 0.3s;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .result-card.severity-low {
+            border-left-color: #28a745;
+        }
+
+        .result-card.severity-medium {
+            border-left-color: #ffc107;
+        }
+
+        .result-card.severity-high {
+            border-left-color: #dc3545;
+        }
+
+        .result-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .result-filename {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+
+        .result-disease {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .result-confidence {
+            font-size: 13px;
+            color: var(--accent-1);
+            margin-bottom: 10px;
+        }
+
+        .result-severity {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .severity-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .severity-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .severity-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-1);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: var(--error-bg);
+            color: var(--error-text);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--error-text);
+            display: none;
+        }
+
+        .success {
+            background: var(--success-bg);
+            color: var(--success-text);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--success-text);
+            display: none;
+        }
+
+        .theme-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .theme-selector.show {
+            display: grid;
+        }
+
+        .theme-option {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-align: center;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+
+        .theme-option:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-option.active {
+            border: 2px solid var(--text-primary);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📊 Batch Image Analysis</h1>
+                <p class="subtitle">Analyze multiple skin images at once</p>
+            </div>
+            <div style="position: relative;">
+                <button id="themeToggle" style="background: transparent; border: none; cursor: pointer; font-size: 24px;">🌙</button>
+                <div class="theme-selector" id="themeSelector">
+                    <div class="theme-option" data-theme="light">☀️ Light</div>
+                    <div class="theme-option active" data-theme="default">🌙 Default</div>
+                    <div class="theme-option" data-theme="ocean">🌊 Ocean</div>
+                    <div class="theme-option" data-theme="forest">🌲 Forest</div>
+                    <div class="theme-option" data-theme="sunset">🌅 Sunset</div>
+                    <div class="theme-option" data-theme="midnight">🌃 Midnight</div>
+                    <div class="theme-option" data-theme="cyberpunk">⚡ Cyberpunk</div>
+                </div>
+            </div>
+        </div>
+
+        <a href="/" class="btn-back">← Back to Home</a>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="upload-area" id="uploadArea">
+            <input type="file" id="fileInput" multiple accept="image/*">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">Click to upload or drag and drop multiple images</div>
+            <div class="upload-hint">PNG, JPG, GIF up to 16MB each</div>
+        </div>
+
+        <div class="file-list" id="fileList" style="display: none;"></div>
+
+        <div class="button-group" id="buttonGroup" style="display: none;">
+            <button class="btn-analyze" id="analyzeBtn">📊 Analyze All</button>
+            <button class="btn-clear" id="clearBtn">Clear Files</button>
+        </div>
+
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Processing images...</p>
+        </div>
+
+        <div class="progress-section" id="progressSection">
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span id="progressText">0/0 images processed</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div class="stats" id="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalAnalyzed">0</div>
+                    <div class="stat-label">Total Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="highRiskCount">0</div>
+                    <div class="stat-label">High Risk</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="mediumRiskCount">0</div>
+                    <div class="stat-label">Medium Risk</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="lowRiskCount">0</div>
+                    <div class="stat-label">Low Risk</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Analysis Results</h2>
+                <button class="btn-download" id="downloadBtn">📥 Download Report</button>
+            </div>
+            <div class="results-grid" id="resultsGrid"></div>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+            <div class="empty-state-icon">📤</div>
+            <p>Upload multiple images to get started</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize theme
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        const currentVariant = localStorage.getItem('themeVariant') || 'default';
+
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (currentVariant !== 'default') {
+                document.body.classList.add(`dark-mode-${currentVariant}`);
+            }
+        }
+
+        // Theme management
+        const themeToggle = document.getElementById('themeToggle');
+        const themeSelector = document.getElementById('themeSelector');
+        const themeOptions = document.querySelectorAll('.theme-option');
+
+        themeToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeSelector.classList.toggle('show');
+        });
+
+        themeOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const theme = option.dataset.theme;
+
+                document.body.classList.remove('dark-mode', 'dark-mode-ocean', 'dark-mode-forest', 'dark-mode-sunset', 'dark-mode-midnight', 'dark-mode-cyberpunk');
+                themeOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+
+                if (theme === 'light') {
+                    localStorage.setItem('theme', 'light');
+                    localStorage.removeItem('themeVariant');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    document.body.classList.add('dark-mode');
+                    if (theme !== 'default') {
+                        document.body.classList.add(`dark-mode-${theme}`);
+                        localStorage.setItem('themeVariant', theme);
+                    } else {
+                        localStorage.removeItem('themeVariant');
+                    }
+                    localStorage.setItem('theme', 'dark');
+                    themeToggle.textContent = '🌙';
+                }
+
+                themeSelector.classList.remove('show');
+            });
+        });
+
+        document.addEventListener('click', () => {
+            themeSelector.classList.remove('show');
+        });
+
+        // Set initial active theme
+        const activeTheme = currentTheme === 'dark' ? currentVariant : 'light';
+        themeOptions.forEach(option => {
+            if (option.dataset.theme === activeTheme) {
+                option.classList.add('active');
+            }
+        });
+
+        // File handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const buttonGroup = document.getElementById('buttonGroup');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const loader = document.getElementById('loader');
+        const progressSection = document.getElementById('progressSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const error = document.getElementById('error');
+        const success = document.getElementById('success');
+
+        let selectedFiles = [];
+        let analysisResults = [];
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            selectedFiles = Array.from(e.target.files);
+            updateFileList();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('drag-over');
+            selectedFiles = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            updateFileList();
+        });
+
+        function updateFileList() {
+            if (selectedFiles.length === 0) {
+                fileList.style.display = 'none';
+                buttonGroup.style.display = 'none';
+                return;
+            }
+
+            fileList.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span>📷 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                    <button class="remove-file" onclick="removeFile(${index})">Remove</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+
+            fileList.style.display = 'block';
+            buttonGroup.style.display = 'flex';
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileList();
+        }
+
+        clearBtn.addEventListener('click', () => {
+            selectedFiles = [];
+            fileInput.value = '';
+            updateFileList();
+            resultsSection.style.display = 'none';
+            progressSection.style.display = 'none';
+            analysisResults = [];
+        });
+
+        analyzeBtn.addEventListener('click', async () => {
+            if (selectedFiles.length === 0) {
+                showError('Please select images first');
+                return;
+            }
+
+            analyzeBtn.disabled = true;
+            loader.style.display = 'block';
+            progressSection.style.display = 'block';
+            resultsSection.style.display = 'none';
+            error.style.display = 'none';
+            analysisResults = [];
+
+            for (let i = 0; i < selectedFiles.length; i++) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', selectedFiles[i]);
+
+                    const response = await fetch('/predict', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        analysisResults.push({
+                            filename: selectedFiles[i].name,
+                            file: selectedFiles[i],
+                            result: data
+                        });
+                    }
+
+                    updateProgress(i + 1, selectedFiles.length);
+                } catch (err) {
+                    console.error('Error analyzing file:', selectedFiles[i].name, err);
+                }
+            }
+
+            loader.style.display = 'none';
+            displayResults();
+            analyzeBtn.disabled = false;
+            updateStatistics();
+        });
+
+        function updateProgress(current, total) {
+            const percent = (current / total) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressText').textContent = `${current}/${total} images processed`;
+        }
+
+        function displayResults() {
+            resultsGrid.innerHTML = '';
+
+            analysisResults.forEach(item => {
+                const result = item.result;
+                const card = document.createElement('div');
+                const severity = result.severity || 'Unknown';
+                const severityClass = severity.toLowerCase().includes('high') ? 'severity-high' : severity.toLowerCase().includes('medium') ? 'severity-medium' : 'severity-low';
+
+                card.className = `result-card ${severityClass}`;
+                card.innerHTML = `
+                    <img src="${URL.createObjectURL(item.file)}" class="result-image" alt="${item.filename}">
+                    <div class="result-filename">${item.filename}</div>
+                    <div class="result-disease">${result.disease || 'Unknown'}</div>
+                    <div class="result-confidence">Confidence: ${result.confidence || 0}%</div>
+                    <span class="result-severity severity-${severityClass.split('-')[1]}">${severity}</span>
+                `;
+                resultsGrid.appendChild(card);
+            });
+
+            resultsSection.style.display = 'block';
+            showSuccess(`Analysis complete! ${analysisResults.length} images processed.`);
+        }
+
+        function updateStatistics() {
+            let highRisk = 0, mediumRisk = 0, lowRisk = 0;
+
+            analysisResults.forEach(item => {
+                const severity = (item.result.severity || 'Low').toLowerCase();
+                if (severity.includes('high')) highRisk++;
+                else if (severity.includes('medium')) mediumRisk++;
+                else lowRisk++;
+            });
+
+            document.getElementById('totalAnalyzed').textContent = analysisResults.length;
+            document.getElementById('highRiskCount').textContent = highRisk;
+            document.getElementById('mediumRiskCount').textContent = mediumRisk;
+            document.getElementById('lowRiskCount').textContent = lowRisk;
+        }
+
+        downloadBtn.addEventListener('click', () => {
+            if (analysisResults.length === 0) {
+                showError('No results to download');
+                return;
+            }
+
+            const csvContent = generateCSV();
+            downloadFile(csvContent, `batch_analysis_${new Date().toISOString().slice(0,10)}.csv`);
+        });
+
+        function generateCSV() {
+            let csv = 'Filename,Disease,Confidence,Severity,Description\n';
+
+            analysisResults.forEach(item => {
+                const result = item.result;
+                csv += `"${item.filename}","${result.disease || 'Unknown'}","${result.confidence || 0}%","${result.severity || 'Unknown'}","${(result.description || '').replace(/"/g, '""')}"\n`;
+            });
+
+            return csv;
+        }
+
+        function downloadFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        function showError(message) {
+            error.textContent = message;
+            error.style.display = 'block';
+            setTimeout(() => {
+                error.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            success.textContent = message;
+            success.style.display = 'block';
+            setTimeout(() => {
+                success.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
