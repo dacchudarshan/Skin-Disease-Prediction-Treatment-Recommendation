@@ -186,7 +186,7 @@ If you use this system in your research, please cite:
 ```
 @software{skin_disease_analysis_2024,
   title={Skin Disease Analysis System},
-  author={Your Name},
+  author={darshu},
   year={2024},
   url={https://github.com/yourusername/skin-disease-analysis}
 }
