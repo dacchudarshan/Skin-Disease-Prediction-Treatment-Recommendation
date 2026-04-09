@@ -1,6 +1,6 @@
 # Skin Disease Analysis System
 
-A comprehensive web-based application for analyzing and classifying skin diseases using image processing and machine learning techniques.
+A comprehensive web-based application for analyzing and classifying skin diseases using image processing and machine learning techniques. 
 
 ## Features
 
