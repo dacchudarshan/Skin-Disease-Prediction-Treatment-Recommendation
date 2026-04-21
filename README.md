@@ -1,220 +1,228 @@
-# Skin Disease Analysis System
+# Skin Disease Prediction & Treatment Recommendation
 
-A comprehensive web-based application for analyzing and classifying skin diseases using image processing and machine learning techniques.
+A comprehensive web application for predicting skin diseases using deep learning models and providing evidence-based treatment recommendations powered by AI.
 
 ## Features
 
-- **Image Upload & Analysis**: Upload skin disease images for automated analysis
-- **Disease Classification**: Classify skin conditions using advanced deep learning models
-- **Image Processing**: Comprehensive image validation and preprocessing
-- **Batch Analysis**: Process multiple images at once
-- **Reports & Analytics**: Generate detailed reports on analysis results
-- **Data Visualization**: Visual comparison and statistical analysis of results
-- **PDF Export**: Export analysis results as PDF documents
-- **Gallery Management**: Browse and manage uploaded images
-- **User Management**: Secure user authentication and data management
-
-## System Architecture
-
-```
-skin_disease_project/
-├── app.py                          # Main Flask application
-├── app_mistral.py                  # Mistral AI integration
-├── deep_learning_models.py         # ML model definitions
-├── advanced_accuracy.py            # Advanced detection algorithms
-├── user_management.py              # User authentication & management
-├── telemedicine_api.py             # Telemedicine integration
-├── treatment_recommendations.py    # Treatment suggestions
-├── analytics_reporting.py          # Data analytics & reporting
-├── mistral_vision.py               # Mistral Vision API integration
-├── optimize.py                     # Performance optimization
-├── templates/                      # HTML templates
-│   ├── index.html                  # Home page
-│   ├── batch_analysis.html         # Batch processing
-│   ├── comparison.html             # Image comparison
-│   ├── disease_info.html           # Disease information
-│   ├── gallery.html                # Image gallery
-│   ├── mistral_analysis.html       # AI-powered analysis
-│   ├── statistics.html             # Statistics dashboard
-├── static/                         # Static files
-│   └── css/                        # Stylesheets
-│       ├── home.css
-│       ├── theme.css
-│       └── components.css
-├── uploads/                        # User uploaded images
-├── logs/                           # Application logs
-└── models/                         # Pre-trained ML models
-```
+- **Disease Detection**: Advanced deep learning models for accurate skin disease identification
+- **AI-Powered Recommendations**: Treatment recommendations using Mistral AI integration
+- **Multiple Analysis Methods**: 
+  - Single image analysis
+  - Batch processing for multiple images
+  - Comparison analysis
+- **Telemedicine Support**: API endpoints for telemedicine integration
+- **Analytics & Reporting**: Detailed statistics and performance metrics
+- **User Management**: Secure user authentication and management
+- **Accessibility**: Localization and accessibility features
+- **Security Compliance**: Built-in security and compliance measures
 
 ## Requirements
 
 - Python 3.8+
-- Flask 2.3+
-- TensorFlow/Keras (for ML models)
-- OpenCV (for image processing)
-- Pillow (for image handling)
-- NumPy & SciPy (for numerical operations)
+- TensorFlow/PyTorch (for deep learning models)
+- Flask (web framework)
+- Mistral AI API access (optional, for AI recommendations)
+- Required packages in `requirements.txt`
 
 ## Installation
 
-1. Clone the repository:
+### 1. Clone or Download the Repository
 ```bash
-git clone <repository-url>
-cd original_skin_disease_final
+cd "skin disease prediction & treatment recommendation"
 ```
 
-2. Create a virtual environment:
+### 2. Create Virtual Environment
 ```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
-3. Install dependencies:
+### 3. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your configuration
+### 4. Configure Environment Variables
+Create a `.env` file in the root directory with:
 ```
-
-## Running the Application
-
-### Development Mode
-```bash
-source venv/bin/activate
-export FLASK_APP=skin_disease_project/app.py
-export FLASK_ENV=development
-python -m flask run
-```
-
-The application will be available at `http://127.0.0.1:5000`
-
-### Production Mode
-```bash
-gunicorn --config skin_disease_project/gunicorn_config.py skin_disease_project.app:app
+MISTRAL_API_KEY=your_api_key_here
+FLASK_ENV=development
+SECRET_KEY=your_secret_key_here
 ```
 
 ## Usage
 
-1. **Upload Image**: Click on the upload section to select a skin disease image
-2. **Analyze**: The system will process the image and provide analysis
-3. **View Results**: Review the classification, confidence scores, and recommendations
-4. **Export**: Download results as PDF or compare with other images
+### Running the Web Application
+
+**Standard Application:**
+```bash
+python skin-disease/app.py
+```
+
+**With Mistral AI Integration:**
+```bash
+python skin-disease/app_mistral.py
+```
+
+**Optimized Version:**
+```bash
+python skin-disease/app_optimized.py
+```
+
+**Using Gunicorn (Production):**
+```bash
+gunicorn -c skin-disease/gunicorn_config.py skin-disease:app
+```
+
+The application will be available at `http://localhost:5000`
+
+### Starting Mistral Service
+```bash
+bash start_mistral.sh
+```
+
+### Running Tests
+```bash
+# Test Mistral integration
+python test_mistral_integration.py
+
+# Test skin validation
+python test_skin_validation.py
+```
+
+### Data Cleaning
+To remove non-skin disease images from your dataset:
+```bash
+python cleanup_non_skin_images.py
+```
+
+### Generate Sample Data
+```bash
+python generate_samples.py
+```
 
 ## API Endpoints
 
-### Core Analysis
-- `POST /api/analyze` - Analyze a single image
-- `POST /api/batch-analyze` - Analyze multiple images
-- `GET /api/results/<id>` - Retrieve analysis results
+### Web Interface
+- `GET /` - Home page
+- `POST /analyze` - Single image analysis
+- `POST /batch-analyze` - Batch image analysis
+- `GET /disease/<disease_id>` - Disease information
+- `GET /gallery` - Image gallery
+- `GET /statistics` - Analytics dashboard
 
-### Image Management
-- `GET /api/gallery` - List uploaded images
-- `DELETE /api/image/<id>` - Remove an image
+### Telemedicine API
+- `POST /api/telemedicine/diagnosis` - Submit diagnosis request
+- `GET /api/telemedicine/results/<request_id>` - Get diagnosis results
+- See `telemedicine_api.py` for detailed documentation
 
-### User Management
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
-- `GET /api/user/profile` - Get user profile
+## Model Information
 
-## Configuration
+The application uses advanced deep learning models for skin disease detection:
+- **Accuracy Optimization**: See `advanced_accuracy.py` for model improvement techniques
+- **Model Training**: Training scripts available for custom model development
+- **Supported Diseases**: Multiple skin disease categories with treatment recommendations
 
-Configure the application via environment variables in `.env`:
+## Key Components
 
-```env
-FLASK_ENV=development
-DEBUG=True
-SECRET_KEY=your-secret-key
-DATABASE_URL=postgresql://user:password@localhost/dbname
-UPLOAD_FOLDER=uploads/
-MAX_UPLOAD_SIZE=16777216
-MODEL_PATH=models/
-```
+### Treatment Recommendations (`treatment_recommendations.py`)
+- Evidence-based treatment suggestions
+- Integration with medical databases
+- Personalized recommendations based on analysis
 
-## Testing
+### Mistral AI Vision (`mistral_vision.py`)
+- Advanced image analysis capabilities
+- Natural language generation for reports
+- Multi-language support
 
-Run the test suite:
+### Analytics & Reporting (`analytics_reporting.py`)
+- Disease statistics and trends
+- Performance metrics
+- Usage analytics
+
+### Security (`security_compliance.py`)
+- HIPAA compliance measures
+- Data encryption
+- Secure API authentication
+
+## Development
+
+### Running in Development Mode
 ```bash
-pytest tests/
+export FLASK_ENV=development
+export FLASK_DEBUG=1
+python skin-disease/app.py
 ```
 
-Test specific modules:
+### Quick Start Integration
+For rapid testing and integration:
 ```bash
-python test_skin_validation.py
-python test_mistral_integration.py
+python skin-disease/quick_start_integration.py
 ```
-
-## Features in Development
-
-- [ ] Real-time video analysis
-- [ ] Mobile app support
-- [ ] Advanced AI-powered recommendations
-- [ ] Integration with medical databases
-- [ ] Multi-language support
-- [ ] Telemedicine consultation booking
 
 ## Performance Optimization
 
-The application includes several optimization modules:
-- `optimize.py` - Model and inference optimization
-- `advanced_accuracy.py` - Enhanced accuracy detection
-- Caching mechanisms for faster response times
-- Batch processing for large datasets
-
-## Security
-
-- User authentication with bcrypt password hashing
-- JWT token-based authorization
-- CSRF protection
-- Input validation and sanitization
-- Secure file upload handling
-- Database encryption for sensitive data
-
-## Support
-
-For issues, feature requests, or contributions, please:
-1. Check existing issues on GitHub
-2. Create a detailed issue report
-3. Fork and submit pull requests
-
-## Citation
-
-If you use this system in your research, please cite:
+For production deployments, use the optimized version:
+```bash
+python skin-disease/app_optimized.py
 ```
-@software{skin_disease_analysis_2024,
-  title={Skin Disease Analysis System},
-  author={darshu},
-  year={2024},
-  url={https://github.com/yourusername/skin-disease-analysis}
-}
-```
+
+Features include:
+- Model caching
+- Request batching
+- Output compression
+- Improved database queries
+
+## Troubleshooting
+
+### Model Loading Issues
+- Ensure model files are in `skin-disease/models/`
+- Check TensorFlow/PyTorch installation
+- Verify file permissions
+
+### Mistral API Errors
+- Verify API key is set in environment variables
+- Check network connectivity
+- Review API rate limits
+
+### Image Upload Problems
+- Ensure `skin-disease/uploads/` directory has write permissions
+- Check file size limits in Flask configuration
+- Verify supported image formats (JPEG, PNG)
+
+## Contributing
+
+Contributions are welcome! Please:
+1. Create a new branch for your feature
+2. Write tests for new functionality
+3. Update documentation
+4. Submit a pull request
+
+## License
+
+This project is licensed under the terms specified in the LICENSE file.
+
+## Contact & Support
+
+For questions or issues:
+- Check the troubleshooting section
+- Review test files for usage examples
+- Check logs in `skin-disease/logs/` directory
+
+## Technologies Used
+
+- **Backend**: Flask, Python
+- **ML/DL**: TensorFlow/PyTorch
+- **AI**: Mistral AI API
+- **Frontend**: HTML, CSS, JavaScript
+- **Database**: SQLite/PostgreSQL (configurable)
+- **Deployment**: Gunicorn, Docker-ready
 
 ## Disclaimer
 
-This system is for research and educational purposes only. It should not be used as a replacement for professional medical diagnosis. Always consult with qualified healthcare professionals for medical advice.
+This application is for educational and informational purposes. It should not be used as a substitute for professional medical advice. Always consult with qualified healthcare professionals for diagnosis and treatment decisions.
 
-## Acknowledgments
+---
 
-- TensorFlow/Keras community
-- OpenCV community
-- Medical imaging datasets
-- Contributors and testers
-
-## Changelog
-
-### Version 1.0.0 (2024)
-- Initial release
-- Core image analysis functionality
-- User management system
-- Report generation
-- Batch processing capabilities
-
-## Future Roadmap
-
-- Q3 2024: Mobile application
-- Q4 2024: Advanced AI integration
-- Q1 2025: Telemedicine features
-- Q2 2025: International expansion      
+**Version**: 1.0  
+**Last Updated**: january 2026
